@@ -1,4 +1,6 @@
 ﻿using Benner.Tecnologia.Common.IoC;
+using Esp.ErpSuporte.Caisp.Business.Interfaces.Caisp;
+using Esp.ErpSuporte.Caisp.Business.Modelos.Caisp;
 using Ninject;
 using System;
 using System.Collections.Generic;

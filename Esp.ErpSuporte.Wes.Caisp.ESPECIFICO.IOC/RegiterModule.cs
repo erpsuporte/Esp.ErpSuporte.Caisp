@@ -1,5 +1,6 @@
 ﻿using Ninject.Modules;
 using Benner.Tecnologia.Business;
+using Esp.ErpSuporte.Caisp.Business.Interfaces.Caisp;
 
 namespace Esp.ErpSuporte.Wes.Caisp.ESPECIFICO.IOC
 {
