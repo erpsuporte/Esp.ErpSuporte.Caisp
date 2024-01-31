@@ -1,7 +1,7 @@
 ﻿using Ninject.Modules;
 using Benner.Tecnologia.Business;
 using Esp.ErpSuporte.Caisp.Business.Interfaces.Caisp;
-using Esp.ErpSuporte.Caisp.Components;
+using Esp.ErpSuporte.Caisp.Components.Caisp;
 
 namespace Esp.ErpSuporte.Caisp.ESPECIFICO.IOC
 {
@@ -9,7 +9,7 @@ namespace Esp.ErpSuporte.Caisp.ESPECIFICO.IOC
     {
         public override void Load()
         {
-            BusinessComponent.Register<ICaisp, Caisp>(Kernel);
+            BusinessComponent.Register<ICaisp, CaispComponente>(Kernel);
         }
     }
 }

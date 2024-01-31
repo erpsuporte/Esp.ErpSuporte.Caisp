@@ -2,92 +2,170 @@
 using Benner.Tecnologia.Common;
 using Esp.ErpSuporte.Caisp.Business.Interfaces.Caisp;
 using Esp.ErpSuporte.Caisp.Business.Modelos.Caisp;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace Esp.ErpSuporte.Caisp.Components.Caisp
 {
-    public class Caisp : BusinessComponent<Caisp>, ICaisp
+    public class CaispComponente : BusinessComponent<CaispComponente>, ICaisp
     {
         public List<ContatosModel> buscarContatos()
         {
+
             List<ContatosModel> retorno = new List<ContatosModel>();
 
-            retorno.Add(new ContatosModel()
-            {
-                Handle = 1,
-                Nome = "Nome 1",
-                Descricao = "Descricao 1",
-                Cargo = "Cargo 1",
-                Telefone = "11991595816",
-                Ramal = "Ramal 1",
-                Whatsapp = "11991595816"
-            });
-            retorno.Add(new ContatosModel()
-            {
-                Handle = 2,
-                Nome = "Nome 2",
-                Descricao = "Descricao 2",
-                Cargo = "Cargo 2",
-                Telefone = "11991595816",
-                Ramal = "Ramal 2",
-                Whatsapp = "11991595816"
-            });
 
-            return retorno;
+            //retorno.Add(new ContatosModel()
+            //{
+            //    Handle = 1,
+            //    Nome = "Nome 1",
+            //    Descricao = "Descricao 1",
+            //    Cargo = "Cargo 1",
+            //    Telefone = "11991595816",
+            //    Ramal = "Ramal 1",
+            //    Whatsapp = "11991595816"
+            //});
+            //retorno.Add(new ContatosModel()
+            //{
+            //    Handle = 2,
+            //    Nome = "Nome 2",
+            //    Descricao = "Descricao 2",
+            //    Cargo = "Cargo 2",
+            //    Telefone = "11991595816",
+            //    Ramal = "Ramal 2",
+            //    Whatsapp = "11991595816"
+            //});
+
+            List<EntityBase> registros = Entity.GetMany(EntityDefinition.GetByName("K_GN_CONTATOS"), new Criteria());
+            //Criteria criteria = new Criteria();
+
+            //retorno = registros.ToArray() //GetMany(criteria); // preciso fazer o get many
+
+            foreach (EntityBase registro in registros)
+            {
+                retorno.Add(new ContatosModel()
+                {
+                    Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
+                });
+            }
+                
+                return retorno; 
         }
-        public List<DocModel> buscarDoc()
+        public List<DocModel> buscarDoc(DateTime dataInicio,DateTime dataFim)
         {
             List<DocModel> retorno = new List<DocModel>();
 
-            retorno.Add(new DocModel()
+            //retorno.Add(new DocModel()
+            //{
+            //    Handle = 1,
+            //    Data = DateTime.Parse("01 /01/2022"),
+            //    Numero = 1,
+            //    Nome = "Nome 1",
+            //    Descricao = "Descricao 1",
+            //    UrlPDF = @"http://erpsuporte.com.br"
+            //});
+            //retorno.Add(new DocModel()
+            //{
+            //    Handle = 2,
+            //    Data = DateTime.Parse("01/01/2022"),
+            //    Numero = 2,
+            //    Nome = "Nome 2",
+            //    Descricao = "Descricao 2",
+            //    UrlPDF = @"http://erpsuporte.com.br"
+            //});
+
+            Query query = new Query(@"SELECT C.NOME, C.DATA, C.LINK, C.DESCRICAO
+                                        FROM K_GN_DOCUMENTOS C
+                                        JOIN K_GN_DOCUMENTOPESSOAS B ON C.HANDLE = B.DOCUMENTO
+                                        JOIN K_GN_PESSOAUSUARIOS A ON B.PESSOA = A.PESSOA
+                                        WHERE @USUARIO = A.USUARIO
+                                        AND C.DATA BETWEEN :DATAINICIO AND :DATAFIM;
+                                        ");
+            query.Parameters.Add(new Parameter("DATAINICIO", dataInicio));
+            query.Parameters.Add(new Parameter("DATAFIM", dataFim));
+
+            var registros = query.Execute();
+
+            foreach (EntityBase registro in registros)
             {
-                Handle = 1,
-                Data = DateTime.Parse("01/01/2022"),
-                Numero = 1,
-                Nome = "Nome 1",
-                Descricao = "Descricao 1",
-                UrlPDF = @"http://erpsuporte.com.br"
-            });
-            retorno.Add(new DocModel()
-            {
-                Handle = 2,
-                Data = DateTime.Parse("01/01/2022"),
-                Numero = 2,
-                Nome = "Nome 2",
-                Descricao = "Descricao 2",
-                UrlPDF = @"http://erpsuporte.com.br"
-            });
-            return retorno;
+                retorno.Add(new DocModel()
+                {
+                    Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
+                });
+            }
+
+            return retorno;// como converto para List
         }
         public List<EntregasDiaModel> buscarEntregasDia(EntregasDiaBuscarModel request)
         {
             List<EntregasDiaModel> retorno = new List<EntregasDiaModel>();
-            retorno.Add(new EntregasDiaModel()
+            //retorno.Add(new EntregasDiaModel()
+            //{
+            //    Handle = 1,
+            //    DataEntrega = DateTime.Parse("01/01/2022"),
+            //    Numero = 1,
+            //    Conferente = "Conferente 1",
+            //    Assinatura = "Assinatura 1",
+            //    Itens = new List<EntregasItensModel>()
+            //    {
+            //        new EntregasItensModel()
+            //        {
+            //            Handle = 1,
+            //            CodigoReferencia = "CodigoReferencia 1",
+            //            Produto = "Produto 1",
+            //            QuantidadeRecebida = 1
+            //        },
+            //        new EntregasItensModel()
+            //        {
+            //            Handle = 2,
+            //            CodigoReferencia = "CodigoReferencia 2",
+            //            Produto = "Produto 2",
+            //            QuantidadeRecebida = 2
+            //        }
+            //    }
+            //});
+
+            Query query = new Query(@"SELECT A.HANDLE,
+                                       A.DATAENTRADA,
+                                       A.NUMERONOTAFISCAL,
+                                       A.K_CONFERENTE,
+                                       A.K_ASSINATURA
+                                            FROM CP_RECEBIMENTOFISICOPAI A
+                                             INNER JOIN GN_PESSOAS B ON A.FORNECEDOR = B.HANDLE
+                                             WHERE FORNECEDOR = @USUARIO --USUARIO DA PESSOA
+                                              AND DATAENTRADA = CONVERT(DATETIME, :DATA, 103)");
+            query.Parameters.Add(new Parameter("DATA", request.Data));
+            //List<DocModel> retorno = 
+                
+            var registros = query.Execute();//como converter
+            //List<EntityBase> registros2  = query.Execute();
+
+            foreach (EntityBase registro in registros)
             {
-                Handle = 1,
-                DataEntrega = DateTime.Parse("01/01/2022"),
-                Numero = 1,
-                Conferente = "Conferente 1",
-                Assinatura = "Assinatura 1",
-                Itens = new List<EntregasItensModel>()
+
+                Query query2 = new Query(@"SELECT * from CP_RECEIBMENTOFISICO WHERE RECEBIMENTOFISICOPAI = :RECEBIMENTOFISICOPAI");
+                query2.Parameters.Add(new Parameter("RECEBIMENTOFISICOPAI", Convert.ToInt32(registro.Fields["HANDLE"])));
+
+                List<EntregasItensModel> _itens = new List<EntregasItensModel>();
+
+                var registros2 = query.Execute();//como converter
+                foreach (EntityBase registro2 in registros2)
                 {
-                    new EntregasItensModel()
+                    _itens.Add(new EntregasItensModel()
                     {
-                        Handle = 1,
-                        CodigoReferencia = "CodigoReferencia 1",
-                        Produto = "Produto 1",
-                        QuantidadeRecebida = 1
-                    },
-                    new EntregasItensModel()
-                    {
-                        Handle = 2,
-                        CodigoReferencia = "CodigoReferencia 2",
-                        Produto = "Produto 2",
-                        QuantidadeRecebida = 2
-                    }
+                        Handle = Convert.ToInt32(registro2.Fields["HANDLE"]),
+                    });
                 }
-            });
+
+                retorno.Add(new EntregasDiaModel()
+                {
+                    Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
+                    Itens = _itens
+                });
+            }
+
             return retorno;
         }
 
@@ -110,6 +188,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                 QuantidadeRecebida = 200
             }
             );
+
             return retorno;
         }
 

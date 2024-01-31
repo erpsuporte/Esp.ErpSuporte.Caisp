@@ -32,7 +32,7 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("buscarContatos")]
+        [Route("buscarContatos")] //Cadastrar UI Desktop, mostrar todos contatos
         public IHttpActionResult buscarContatos()
         {
             List<ContatosModel> retorno = componente.buscarContatos();
@@ -43,11 +43,11 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("buscarDoc")]
-        public IHttpActionResult buscarDoc()
+        [Route("buscarDoc")]// Criar tabela(Criar campo arquivo não vai na api) foto no celular com autorização do usuario
+        public IHttpActionResult buscarDoc(DateTime DataIncio,DateTime DataFim)
         {
 
-            List<DocModel> retorno = componente.buscarDoc();
+            List<DocModel> retorno = componente.buscarDoc(DataIncio,DataFim);
             return Ok(retorno);
         }
 
@@ -56,7 +56,7 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("buscarEntregasDia")]
+        [Route("buscarEntregasDia")]// SELECT PARA ver o que recebeu, verificar qual usuario que tem entregas
         public IHttpActionResult buscarEntregasDia([FromBody] EntregasDiaBuscarModel request)
         {
 
@@ -68,7 +68,7 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("buscarEntregasDia")]
+        [Route("buscarEntregasPeriodo")]
         public IHttpActionResult buscarEntregasPeriodo([FromBody] EntregasPeriodoBuscaModel request)
         {
 

@@ -10,7 +10,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Interfaces.Caisp
     public interface ICaisp
     {
         List<ContatosModel> buscarContatos();
-        List<DocModel> buscarDoc();
+        List<DocModel> buscarDoc(DateTime DataInicio,DateTime DataFim);
         List<EntregasDiaModel> buscarEntregasDia(EntregasDiaBuscarModel request);
         List<Eventos> buscarEventos();
         FinanceiroModel buscarFinanceiro();

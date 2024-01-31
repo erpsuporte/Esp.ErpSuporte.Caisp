@@ -61,6 +61,7 @@
     <ProjectReference Include="..\Esp.ErpSuporte.Caisp.Components\Esp.ErpSuporte.Caisp.Components.csproj">
       <Project>{9354b776-7343-4e29-9e0a-5590585b90d3}</Project>
       <Name>Esp.ErpSuporte.Caisp.Components</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
