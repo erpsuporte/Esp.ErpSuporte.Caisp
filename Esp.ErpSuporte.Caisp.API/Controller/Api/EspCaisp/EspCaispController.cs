@@ -32,7 +32,7 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("buscarContatos")] //Cadastrar UI Desktop, mostrar todos contatos
+        [Route("buscarContatos")] //Criar pagina de cadastro no Wes com contato
         public IHttpActionResult buscarContatos()
         {
             List<ContatosModel> retorno = componente.buscarContatos();
@@ -43,11 +43,11 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("buscarDoc")]// Criar tabela(Criar campo arquivo não vai na api) foto no celular com autorização do usuario
-        public IHttpActionResult buscarDoc(DateTime DataIncio,DateTime DataFim)
+        [Route("buscarDoc")]// Criar pagina de cadastro de pessoas e pessoausuarios no Wes
+        public IHttpActionResult buscarDoc(DateTime DataIncio, DateTime DataFim)
         {
 
-            List<DocModel> retorno = componente.buscarDoc(DataIncio,DataFim);
+            List<DocModel> retorno = componente.buscarDoc(DataIncio, DataFim);
             return Ok(retorno);
         }
 
@@ -57,7 +57,7 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         /// <returns></returns>
         [HttpGet]
         [Route("buscarEntregasDia")]// SELECT PARA ver o que recebeu, verificar qual usuario que tem entregas
-        public IHttpActionResult buscarEntregasDia([FromBody] EntregasDiaBuscarModel request)
+        public IHttpActionResult buscarEntregasDia([FromUri] EntregasDiaBuscarModel request)
         {
 
             List<EntregasDiaModel> retorno = componente.buscarEntregasDia(request);
@@ -92,7 +92,7 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("buscarFinanceiro")]
+        [Route("buscarFinanceiro")] // adicionar selects que estão na área de trabalho 
         public IHttpActionResult buscarFinanceiro()
         {
 

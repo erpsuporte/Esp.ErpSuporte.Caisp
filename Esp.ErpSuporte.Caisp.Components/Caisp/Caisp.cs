@@ -1,5 +1,6 @@
 ﻿using Benner.Tecnologia.Business;
 using Benner.Tecnologia.Common;
+using Benner.Tecnologia.Common.EnterpriseServiceLibrary;
 using Esp.ErpSuporte.Caisp.Business.Interfaces.Caisp;
 using Esp.ErpSuporte.Caisp.Business.Modelos.Caisp;
 using Microsoft.Win32;
@@ -27,33 +28,27 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
             //    Ramal = "Ramal 1",
             //    Whatsapp = "11991595816"
             //});
-            //retorno.Add(new ContatosModel()
-            //{
-            //    Handle = 2,
-            //    Nome = "Nome 2",
-            //    Descricao = "Descricao 2",
-            //    Cargo = "Cargo 2",
-            //    Telefone = "11991595816",
-            //    Ramal = "Ramal 2",
-            //    Whatsapp = "11991595816"
-            //});
 
             List<EntityBase> registros = Entity.GetMany(EntityDefinition.GetByName("K_GN_CONTATOS"), new Criteria());
-            //Criteria criteria = new Criteria();
 
-            //retorno = registros.ToArray() //GetMany(criteria); // preciso fazer o get many
 
             foreach (EntityBase registro in registros)
             {
                 retorno.Add(new ContatosModel()
                 {
                     Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
+                    Nome = Convert.ToString(registro.Fields["NOME"]),
+                    Descricao = Convert.ToString(registro.Fields["DESCRICAO"]),
+                    Cargo = Convert.ToString(registro.Fields["CARGO"]),
+                    Telefone = Convert.ToString(registro.Fields["TELEFONE"]),
+                    Ramal = Convert.ToString(registro.Fields["RAMAL"]),
+                    Whatsapp = Convert.ToString(registro.Fields["WHATSAPP"]),// adicionar os outros campos
                 });
             }
-                
-                return retorno; 
+
+            return retorno;
         }
-        public List<DocModel> buscarDoc(DateTime dataInicio,DateTime dataFim)
+        public List<DocModel> buscarDoc(DateTime dataInicio, DateTime dataFim)
         {
             List<DocModel> retorno = new List<DocModel>();
 
@@ -76,16 +71,18 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
             //    UrlPDF = @"http://erpsuporte.com.br"
             //});
 
-            Query query = new Query(@"SELECT C.NOME, C.DATA, C.LINK, C.DESCRICAO
+
+
+            Query query = new Query(@"SELECT C.HANDLE, C.DATA, C.NUMERO, C.NOME, C.DESCRICAO, C.LINK
                                         FROM K_GN_DOCUMENTOS C
-                                        JOIN K_GN_DOCUMENTOPESSOAS B ON C.HANDLE = B.DOCUMENTO
-                                        JOIN K_GN_PESSOAUSUARIOS A ON B.PESSOA = A.PESSOA
-                                        WHERE @USUARIO = A.USUARIO
+                                        LEFT JOIN K_GN_DOCUMENTOPESSOAS B ON C.HANDLE = B.DOCUMENTO
+                                        LEFT JOIN K_GN_PESSOAUSUARIOS A ON B.PESSOA = A.PESSOA
+                                        WHERE (@USUARIO = A.USUARIO OR A.USUARIO IS NULL)
                                         AND C.DATA BETWEEN :DATAINICIO AND :DATAFIM;
                                         ");
             query.Parameters.Add(new Parameter("DATAINICIO", dataInicio));
             query.Parameters.Add(new Parameter("DATAFIM", dataFim));
-
+            //List<EntityBase> registros = Entity.GetMany(EntityDefinition.GetByName("K_GN_DOCUMENTOS"), new Criteria()); ;
             var registros = query.Execute();
 
             foreach (EntityBase registro in registros)
@@ -93,10 +90,16 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                 retorno.Add(new DocModel()
                 {
                     Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
+                    Data = Convert.ToDateTime(registro.Fields["DATA"]),
+                    Numero = Convert.ToInt32(registro.Fields["NUMERO"]),
+                    Nome = Convert.ToString(registro.Fields["NOME"]),
+                    Descricao = Convert.ToString(registro.Fields["DESCRICAO"]),
+                    UrlPDF = Convert.ToString(registro.Fields["LINK"]),
                 });
             }
+            return retorno;
 
-            return retorno;// como converto para List
+
         }
         public List<EntregasDiaModel> buscarEntregasDia(EntregasDiaBuscarModel request)
         {
@@ -128,40 +131,54 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
             //});
 
             Query query = new Query(@"SELECT A.HANDLE,
-                                       A.DATAENTRADA,
-                                       A.NUMERONOTAFISCAL,
-                                       A.K_CONFERENTE,
-                                       A.K_ASSINATURA
-                                            FROM CP_RECEBIMENTOFISICOPAI A
-                                             INNER JOIN GN_PESSOAS B ON A.FORNECEDOR = B.HANDLE
-                                             WHERE FORNECEDOR = @USUARIO --USUARIO DA PESSOA
-                                              AND DATAENTRADA = CONVERT(DATETIME, :DATA, 103)");
-            query.Parameters.Add(new Parameter("DATA", request.Data));
+                                          A.DATAENTRADA,
+                                          A.NUMERONOTAFISCAL,
+                                          A.K_CONFERENTE,
+                                          A.K_ASSINATURA
+                                                FROM CP_RECEBIMENTOFISICOPAI A
+                                                INNER JOIN GN_PESSOAS B ON A.FORNECEDOR = B.HANDLE
+                                                WHERE A.FORNECEDOR = @USUARIO --USUARIO DA PESSOA
+                                                   AND CONVERT(DATE, A.DATAENTRADA, 103) = CONVERT(DATE, :DATA, 103)");
+            query.Parameters.Add(new Parameter("DATA", request.Data)); //System.NullReferenceException: 'Referência de objeto não definida para uma instância de um objeto.'
             //List<DocModel> retorno = 
-                
+
             var registros = query.Execute();//como converter
             //List<EntityBase> registros2  = query.Execute();
 
             foreach (EntityBase registro in registros)
             {
 
-                Query query2 = new Query(@"SELECT * from CP_RECEIBMENTOFISICO WHERE RECEBIMENTOFISICOPAI = :RECEBIMENTOFISICOPAI");
+                Query query2 = new Query(@"SELECT A.HANDLE,
+                                           B.CODIGOREFERENCIA,
+                                           B.NOME,
+                                           A.QTDEENTREGA
+                                             FROM CP_RECEBIMENTOFISICO A
+                                               INNER JOIN PD_PRODUTOS B ON A.PRODUTO = B.HANDLE
+                                                WHERE A.RECEBIMENTOFISICOPAI = :RECEBIMENTOFISICOPAI");
                 query2.Parameters.Add(new Parameter("RECEBIMENTOFISICOPAI", Convert.ToInt32(registro.Fields["HANDLE"])));
 
                 List<EntregasItensModel> _itens = new List<EntregasItensModel>();
 
-                var registros2 = query.Execute();//como converter
+                var registros2 = query2.Execute();
                 foreach (EntityBase registro2 in registros2)
                 {
                     _itens.Add(new EntregasItensModel()
                     {
                         Handle = Convert.ToInt32(registro2.Fields["HANDLE"]),
+                        CodigoReferencia = Convert.ToString(registro2.Fields["CODIGOREFERENCIA"]),
+                        Produto = Convert.ToString(registro2.Fields["NOME"]),
+                        QuantidadeRecebida = Convert.ToInt32(registro2.Fields["QTDEENTREGA"]),
+
                     });
                 }
 
                 retorno.Add(new EntregasDiaModel()
                 {
                     Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
+                    DataEntrega = Convert.ToDateTime(registro.Fields["DATAENTRADA"]),
+                    Numero = Convert.ToInt32(registro.Fields["NUMERONOTAFISCAL"]),
+                    Conferente = Convert.ToString(registro.Fields["K_CONFERENTE"]),
+                    Assinatura = Convert.ToBase64String((byte[])registro.Fields["K_ASSINATURA"]),
                     Itens = _itens
                 });
             }
@@ -218,49 +235,148 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
         }
         public FinanceiroModel buscarFinanceiro()
         {
-            FinanceiroModel retorno = new FinanceiroModel()
+            FinanceiroModel retorno = new FinanceiroModel();
+            Query query = new Query(@"SELECT A.HANDLE HADNLEDOCUMENTO,
+                                                               B.HANDLE,
+                                                               A.DATAEMISSAO,
+                                                               B.DATAVENCIMENTO DataVencimento,
+                                                               B.VCTOPRORROGADO DataPagamento,
+                                                               A.DOCUMENTODIGITADO,
+                                                               B.VALOR - B.VALORESBAIXADOS Valor,
+                                                               O.NOME Operacao,
+                                                               NULL CFOP, --PEGA DE QQ ITEM
+                                                               A.HISTORICO,
+                                                               NULL Observacao
+                                                          FROM FN_DOCUMENTOS A
+                                                               JOIN FN_PARCELAS B ON (B.DOCUMENTO = A.HANDLE)
+                                                               JOIN GN_OPERACOES O ON (O.HANDLE = A.OPERACAO)
+                                                               LEFT OUTER JOIN TR_MODELOSFISCAIS M ON (M.HANDLE = A.MODELO)
+                                                         WHERE
+
+                                                                   A.OPERACAO = O.HANDLE
+
+                                                               AND
+
+                                                                   A.ENTRADASAIDA = 'E'
+
+                                                               AND
+
+                                                                   A.TIPODEMOVIMENTO = 1
+                                                               AND NOT EXISTS
+                                                               (
+                                                                   SELECT 1
+                                                                          FROM (SELECT 'R' ID
+                                                                                 UNION ALL SELECT 'F' ID
+                                                                                            UNION ALL SELECT 'A' ID
+                                                                                                       UNION ALL SELECT 'B' ID
+                                                                                                                  UNION ALL SELECT 'D' ID
+                                                                                                                             UNION ALL SELECT 'G' ID
+                                                                                                                                        UNION ALL SELECT 'H' ID) AB_LIST WHERE (A.ABRANGENCIA = AB_LIST.ID))
+                                                                   AND A.EHPREVISAO = 'N'
+                                                                   AND A.PESSOA IN (SELECT PESSOA FROM K_GN_PESSOAUSUARIOS U WHERE U.USUARIO = @USUARIO)
+                                                                   AND (((B.VALORESBAIXADOS IS NULL OR B.VALORESBAIXADOS = 0) AND (B.VALOR > 0)))
+                                                              ORDER BY B.AP");
+
+
+            //System.NullReferenceException: 'Referência de objeto não definida para uma instância de um objeto.'
+            //List<DocModel> retorno = 
+            var registros = query.Execute();
+            foreach (EntityBase registro in registros)
             {
-                Saldo = 1,
-                Itens = new List<FinanceiroItemModel>()
+
+                Query query2 = new Query(@"SELECT A.HANDLE,
+                                                   A.QUANTIDADE,
+                                                   A.VALORUNITARIO,
+                                                   A.VALORTOTAL,
+                                                   C.NOME PRODUTO,
+                                                   D.ESTRUTURA CFOP
+                                              FROM CM_ITENS A
+                                                   INNER JOIN FN_DOCUMENTOS B ON A.DOCUMENTO = B.HANDLE
+                                                   INNER JOIN PD_PRODUTOS C ON A.PRODUTO = C.HANDLE
+                                                   INNER JOIN GN_NATUREZASFISCAIS D ON A.CLASSIFICACAOFISCAL = D.HANDLE
+                                             WHERE B.DOCUMENTOORIGEM = :HADNLEDOCUMENTO");
+                query2.Parameters.Add(new Parameter("HADNLEDOCUMENTO", Convert.ToInt32(registro.Fields["HADNLEDOCUMENTO"])));
+                var registros2 = query2.Execute();
+                List<FinanceiroProdutosModel> _Produtos = new List<FinanceiroProdutosModel>();
+                foreach (EntityBase registro2 in registros2)
                 {
-                    new FinanceiroItemModel()
+                    
+
+                    _Produtos.Add(new FinanceiroProdutosModel()
                     {
-                        Handle = 1,
-                        DataEmissao = DateTime.Parse("01/01/2022"),
-                        DataVencimento = DateTime.Parse("01/01/2022"),
-                        DataPagamento = DateTime.Parse("01/01/2022"),
-                        DocumentoDigitado = "123456",
-                        Valor = 1000,
-                        Operacao = "Venda",
-                        CFOP = "5102",
-                        Historico = "Venda de produtos",
-                        Observacao = "Pagamento em dinheiro",
-                        Produtos = new List<FinanceiroProdutosModel>()
-                        {
-                            new FinanceiroProdutosModel()
-                            {
-                                Handle = 1,
-                                Quantidade = 5,
-                                ValorUnitario = 200,
-                                Total = 1000,
-                                Nome = "Produto 1"
-                            },
-                            new FinanceiroProdutosModel()
-                            {
-                                Handle = 2,
-                                Quantidade = 3,
-                                ValorUnitario = 150,
-                                Total = 450,
-                                Nome = "Produto 2"
-                            }
-                        }
-                    }
+                        Handle = Convert.ToInt32(registro2.Fields["HANDLE"]),
+                        Quantidade = Convert.ToInt32(registro2.Fields["QUANTIDADE"]),
+                        ValorUnitario = Convert.ToInt32(registro2.Fields["VALORUNITARIO"]),
+                        Total = Convert.ToInt32(registro2.Fields["VALORTOTAL"]),
+                        Nome = Convert.ToString(registro2.Fields["Nome"])
+                    });
 
+                    
                 }
-            };
 
-
+                // Adicionando Produtos ao último item em retorno.Itens
+                retorno.Itens.Add(new FinanceiroItemModel()
+                {
+                    Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
+                    DataEmissao= Convert.ToDateTime(registro.Fields["DATAEMISSAO"]),
+                    DataVencimento = Convert.ToDateTime(registro.Fields["DataVencimento"]),
+                    DataPagamento = Convert.ToDateTime(registro.Fields["DataPagamento"]),
+                    DocumentoDigitado = Convert.ToString(registro.Fields["DOCUMENTODIGITADO"]),
+                    Valor = Convert.ToInt32(registro.Fields["Valor"]),
+                    Operacao = Convert.ToString(registro.Fields["Operacao"]),
+                    CFOP = Convert.ToString(registro.Fields["CFOP"]), //lembra de atribuir valor depois
+                    Historico= Convert.ToString(registro.Fields["HISTORICO"]),
+                    Observacao= Convert.ToString(registro.Fields["Observacao"]),
+                    Produtos = _Produtos 
+                });
+                retorno.Saldo = 1;
+            }
             return retorno;
+            //FinanceiroModel retorno = new FinanceiroModel()
+            //{
+            //    Saldo = 1,
+
+            //    Itens = new List<FinanceiroItemModel>()
+            //    {
+            //        //new FinanceiroItemModel()
+            //        //{
+            //        //    Handle = 1,
+            //        //    DataEmissao = DateTime.Parse("01/01/2022"),
+            //        //    DataVencimento = DateTime.Parse("01/01/2022"),
+            //        //    DataPagamento = DateTime.Parse("01/01/2022"),
+            //        //    DocumentoDigitado = "123456",
+            //        //    Valor = 1000,
+            //        //    Operacao = "Venda",
+            //        //    CFOP = "5102",
+            //        //    Historico = "Venda de produtos",
+            //        //    Observacao = "Pagamento em dinheiro",
+            //        //    Produtos = new List<FinanceiroProdutosModel>()
+            //        //    {
+            //        //        new FinanceiroProdutosModel()
+            //        //        {
+            //        //            Handle = 1,
+            //        //            Quantidade = 5,
+            //        //            ValorUnitario = 200,
+            //        //            Total = 1000,
+            //        //            Nome = "Produto 1"
+            //        //        },
+            //        //        new FinanceiroProdutosModel()
+            //        //        {
+            //        //            Handle = 2,
+            //        //            Quantidade = 3,
+            //        //            ValorUnitario = 150,
+            //        //            Total = 450,
+            //        //            Nome = "Produto 2"
+            //        //        }
+            //        //    }
+            //        //}
+
+            //    }
+            //};
+
+
+
+
         }
         public List<CardModel> buscarCard()
         {
