@@ -31,8 +31,22 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Benner.Tecnologia.Business, Version=2008.0.0.0, Culture=neutral, PublicKeyToken=f2db26731026fd37, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\Benner.Tecnologia.Business.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Benner.Tecnologia.Common2, Version=2008.0.0.0, Culture=neutral, PublicKeyToken=f2db26731026fd37, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\Benner.Tecnologia.Common2.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web.Http">
+      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\System.Web.Http.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeBehind\DocPdf.cs" />
     <Compile Include="Interfaces\Caisp\ICaisp.cs" />
     <Compile Include="Modelos\Caisp\CaispModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

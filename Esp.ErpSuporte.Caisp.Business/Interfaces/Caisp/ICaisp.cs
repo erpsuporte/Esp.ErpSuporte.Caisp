@@ -9,11 +9,11 @@ namespace Esp.ErpSuporte.Caisp.Business.Interfaces.Caisp
 {
     public interface ICaisp
     {
-        List<ContatosModel> buscarContatos();
-        List<DocModel> buscarDoc(DateTime DataInicio,DateTime DataFim);
-        List<EntregasDiaModel> buscarEntregasDia(EntregasDiaBuscarModel request);
+        List<ContatosModel> buscarContatos(); //Funcionando
+        List<DocModel> buscarDoc(DateTime DataInicio,DateTime DataFim); //Funcionando
+        List<EntregasDiaModel> buscarEntregasDia(EntregasDiaBuscarModel request); //Funcionando
         List<Eventos> buscarEventos();
-        FinanceiroModel buscarFinanceiro();
+        FinanceiroModel buscarFinanceiro(); //Funcionando
         List<CardModel> buscarCard();
         UserInfoModel buscarUserInfo();
         List<ProgramacaoModel> buscarProgramacao(ProgramacaoBsucarModel request);

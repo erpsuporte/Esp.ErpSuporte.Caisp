@@ -94,7 +94,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                     Numero = Convert.ToInt32(registro.Fields["NUMERO"]),
                     Nome = Convert.ToString(registro.Fields["NOME"]),
                     Descricao = Convert.ToString(registro.Fields["DESCRICAO"]),
-                    UrlPDF = Convert.ToString(registro.Fields["LINK"]),
+                    UrlPDF = @"http://localhost/CORP_CAISP_DEV_20230328/Pages/Public/Chamada.aspx?HandleDocumento=" +  Convert.ToString(registro.Fields["HANDLE"]),
                 });
             }
             return retorno;
@@ -137,7 +137,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                                           A.K_ASSINATURA
                                                 FROM CP_RECEBIMENTOFISICOPAI A
                                                 INNER JOIN GN_PESSOAS B ON A.FORNECEDOR = B.HANDLE
-                                                WHERE A.FORNECEDOR = @USUARIO --USUARIO DA PESSOA
+                                                WHERE A.FORNECEDOR IN (SELECT PESSOA FROM K_GN_PESSOAUSUARIOS U WHERE U.USUARIO = @USUARIO) 
                                                    AND CONVERT(DATE, A.DATAENTRADA, 103) = CONVERT(DATE, :DATA, 103)");
             query.Parameters.Add(new Parameter("DATA", request.Data)); //System.NullReferenceException: 'Referência de objeto não definida para uma instância de um objeto.'
             //List<DocModel> retorno = 
@@ -236,6 +236,8 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
         public FinanceiroModel buscarFinanceiro()
         {
             FinanceiroModel retorno = new FinanceiroModel();
+            
+            
             Query query = new Query(@"SELECT A.HANDLE HADNLEDOCUMENTO,
                                                                B.HANDLE,
                                                                A.DATAEMISSAO,
@@ -283,7 +285,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
             var registros = query.Execute();
             foreach (EntityBase registro in registros)
             {
-
+                retorno.Itens = new List<FinanceiroItemModel>();
                 Query query2 = new Query(@"SELECT A.HANDLE,
                                                    A.QUANTIDADE,
                                                    A.VALORUNITARIO,
@@ -298,6 +300,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                 query2.Parameters.Add(new Parameter("HADNLEDOCUMENTO", Convert.ToInt32(registro.Fields["HADNLEDOCUMENTO"])));
                 var registros2 = query2.Execute();
                 List<FinanceiroProdutosModel> _Produtos = new List<FinanceiroProdutosModel>();
+                List<string> _CFOP = new List<string>();
                 foreach (EntityBase registro2 in registros2)
                 {
                     
@@ -306,30 +309,35 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                     {
                         Handle = Convert.ToInt32(registro2.Fields["HANDLE"]),
                         Quantidade = Convert.ToInt32(registro2.Fields["QUANTIDADE"]),
-                        ValorUnitario = Convert.ToInt32(registro2.Fields["VALORUNITARIO"]),
+                        ValorUnitario = Convert.ToInt32(registro2.Fields["VALORUNITARIO"]), 
                         Total = Convert.ToInt32(registro2.Fields["VALORTOTAL"]),
-                        Nome = Convert.ToString(registro2.Fields["Nome"])
+                        Nome = Convert.ToString(registro2.Fields["PRODUTO"])
+                        
                     });
+                    _CFOP.Add(Convert.ToString(registro2.Fields["CFOP"]));
 
-                    
+
                 }
-
-                // Adicionando Produtos ao último item em retorno.Itens
+                
                 retorno.Itens.Add(new FinanceiroItemModel()
                 {
-                    Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
-                    DataEmissao= Convert.ToDateTime(registro.Fields["DATAEMISSAO"]),
-                    DataVencimento = Convert.ToDateTime(registro.Fields["DataVencimento"]),
-                    DataPagamento = Convert.ToDateTime(registro.Fields["DataPagamento"]),
-                    DocumentoDigitado = Convert.ToString(registro.Fields["DOCUMENTODIGITADO"]),
-                    Valor = Convert.ToInt32(registro.Fields["Valor"]),
-                    Operacao = Convert.ToString(registro.Fields["Operacao"]),
-                    CFOP = Convert.ToString(registro.Fields["CFOP"]), //lembra de atribuir valor depois
-                    Historico= Convert.ToString(registro.Fields["HISTORICO"]),
-                    Observacao= Convert.ToString(registro.Fields["Observacao"]),
-                    Produtos = _Produtos 
+                        Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
+                        DataEmissao = Convert.ToDateTime(registro.Fields["DATAEMISSAO"]),
+                        DataVencimento = Convert.ToDateTime(registro.Fields["DataVencimento"]),
+                        DataPagamento = Convert.ToDateTime(registro.Fields["DataPagamento"]),
+                        DocumentoDigitado = Convert.ToString(registro.Fields["DOCUMENTODIGITADO"]),
+                        Valor = Convert.ToInt32(registro.Fields["Valor"]),
+                        CFOP = _CFOP.Count > 0 ? _CFOP[0] : string.Empty,
+                        Operacao = Convert.ToString(registro.Fields["Operacao"]),
+                        Historico = Convert.ToString(registro.Fields["HISTORICO"]),
+                        Observacao = Convert.ToString(registro.Fields["Observacao"]),
+                        Produtos = _Produtos,
                 });
-                retorno.Saldo = 1;
+                
+
+                // Adicionando Produtos ao último item em retorno.Itens
+
+                retorno.Saldo = 1;// depois peguntar se é a mesma coisa que valor
             }
             return retorno;
             //FinanceiroModel retorno = new FinanceiroModel()
