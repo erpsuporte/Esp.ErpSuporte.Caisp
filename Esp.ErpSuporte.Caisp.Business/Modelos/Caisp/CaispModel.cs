@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Benner.Tecnologia.Common.Components;
+using System;
 using System.Collections.Generic;
 
 namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp

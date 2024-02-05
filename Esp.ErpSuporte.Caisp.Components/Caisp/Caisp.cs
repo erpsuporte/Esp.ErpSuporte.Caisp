@@ -1,5 +1,6 @@
 ﻿using Benner.Tecnologia.Business;
 using Benner.Tecnologia.Common;
+using Benner.Tecnologia.Common.Components;
 using Benner.Tecnologia.Common.EnterpriseServiceLibrary;
 using Esp.ErpSuporte.Caisp.Business.Interfaces.Caisp;
 using Esp.ErpSuporte.Caisp.Business.Modelos.Caisp;
@@ -7,6 +8,8 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.ComTypes;
+using System.Security.Policy;
+using static System.Net.WebRequestMethods;
 
 namespace Esp.ErpSuporte.Caisp.Components.Caisp
 {
@@ -84,9 +87,20 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
             query.Parameters.Add(new Parameter("DATAFIM", dataFim));
             //List<EntityBase> registros = Entity.GetMany(EntityDefinition.GetByName("K_GN_DOCUMENTOS"), new Criteria()); ;
             var registros = query.Execute();
+            
+           
+
 
             foreach (EntityBase registro in registros)
             {
+                string url = "http://187.11.132.101:8085/CORP_CAISP_DEV_20230328/Pages/Public/BaixarRelatorio.ashx";
+                //Gerar um link com dois parâmetros
+                var urlLinkDefinition = new UrlLinkDefinition(url);
+                
+
+                //Handle 
+                urlLinkDefinition.Parameters.Add("HandleDocumento", Convert.ToString(registro.Fields["HANDLE"]));
+
                 retorno.Add(new DocModel()
                 {
                     Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
@@ -94,8 +108,8 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                     Numero = Convert.ToInt32(registro.Fields["NUMERO"]),
                     Nome = Convert.ToString(registro.Fields["NOME"]),
                     Descricao = Convert.ToString(registro.Fields["DESCRICAO"]),
-                    UrlPDF = @"http://localhost/CORP_CAISP_DEV_20230328/Pages/Public/Chamada.aspx?HandleDocumento=" +  Convert.ToString(registro.Fields["HANDLE"]),
-                });
+                    UrlPDF = urlLinkDefinition.GetEncodedUrl()
+                }); ;
             }
             return retorno;
 
