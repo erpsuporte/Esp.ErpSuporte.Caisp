@@ -15,7 +15,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
         public string Whatsapp { get; set; }
     }
 
-    public class ProgramacaoBsucarModel
+    public class ProgramacaoBuscarModel
     {
         public string Inicio { get; set; }
         public string Fim { get; set; }
@@ -58,7 +58,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
 
     public class EntregasDiaBuscarModel
     {
-        public DateTime Data { get; set; }
+        public string Data { get; set; }
     }
 
     public class Eventos
@@ -146,7 +146,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
     {
         public int Handle { get; set; }
         public string Produto { get; set; }
-        public string Periodo { get; set; }
+        public DateTime Periodo { get; set; }
         public int Programado { get; set; }
     }
 

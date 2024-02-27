@@ -9,16 +9,16 @@ namespace Esp.ErpSuporte.Caisp.Business.Interfaces.Caisp
 {
     public interface ICaisp
     {
-        List<ContatosModel> buscarContatos(); //Funcionando
-        List<DocModel> buscarDoc(DateTime DataInicio,DateTime DataFim); //Funcionando
-        List<EntregasDiaModel> buscarEntregasDia(EntregasDiaBuscarModel request); //Funcionando
-        List<Eventos> buscarEventos();
-        FinanceiroModel buscarFinanceiro(); //Funcionando
+        List<ContatosModel> buscarContatos(); //-TABELA -UI -API Funcionando - TESTE
+        List<DocModel> buscarDoc(string DataInicio, string DataFim); //-TABELA -UI -API Funcionando - TESTE
+        List<EntregasDiaModel> buscarEntregasDia(EntregasDiaBuscarModel request); // -API Funcionando -TESTE
+        List<Eventos> buscarEventos(); //-TABELA -UI -API - Funcionando -TESTE
+        FinanceiroModel buscarFinanceiro(); //-API Funcionando - TESTAR
         List<CardModel> buscarCard();
         UserInfoModel buscarUserInfo();
-        List<ProgramacaoModel> buscarProgramacao(ProgramacaoBsucarModel request);
-        ResponseModel enviarSac(SacModelPost request);
-        List<SacModelGet> buscarSac();
-        List<EntregasItensModel> buscarEntregasPeriodo(EntregasPeriodoBuscaModel request);
+        List<ProgramacaoModel> buscarProgramacao(ProgramacaoBuscarModel request);// - TABELA BUILDER -UI WEB -DEV API -TESTE
+        ResponseModel enviarSac(SacModelPost request); // TABELA BUILDER SAC  INSERIR REGISTRO API
+        List<SacModelGet> buscarSac(); // BUSCAR SAC DO USUARIO LOGADO API -GESTÂO ESTADO WEB  /DATA RECEBIDA /REPOSTA? /QUEM RECEBEU
+        List<EntregasItensModel> buscarEntregasPeriodo(EntregasPeriodoBuscaModel request); // - DEV API SUM ENTREGAS SOMAS DOS ITENS DO PEIRODO DE DIAS - ROTA COM DATAINICIO E DATA FIM DA REQUESIÃO STIMULSOFT GERANDO O PDF -TESTE
     }
 }

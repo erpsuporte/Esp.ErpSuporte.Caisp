@@ -44,7 +44,7 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         /// <returns></returns>
         [HttpGet]
         [Route("buscarDoc")]// Criar pagina de cadastro de pessoas e pessoausuarios no Wes
-        public IHttpActionResult buscarDoc(DateTime DataIncio, DateTime DataFim)
+        public IHttpActionResult buscarDoc(string DataIncio, string DataFim)
         {
 
             List<DocModel> retorno = componente.buscarDoc(DataIncio, DataFim);
@@ -130,7 +130,7 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         /// <returns></returns>
         [HttpGet]
         [Route("buscarProgramacao")]
-        public IHttpActionResult buscarProgramacao([FromBody] ProgramacaoBsucarModel request)
+        public IHttpActionResult buscarProgramacao([FromUri] ProgramacaoBuscarModel request)
         {
 
             List<ProgramacaoModel> retorno = componente.buscarProgramacao(request);

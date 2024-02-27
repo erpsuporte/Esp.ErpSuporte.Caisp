@@ -7,6 +7,7 @@ using Esp.ErpSuporte.Caisp.Business.Modelos.Caisp;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices.ComTypes;
 using System.Security.Policy;
 using static System.Net.WebRequestMethods;
@@ -51,7 +52,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
 
             return retorno;
         }
-        public List<DocModel> buscarDoc(DateTime dataInicio, DateTime dataFim)
+        public List<DocModel> buscarDoc(string dataInicio, string dataFim)
         {
             List<DocModel> retorno = new List<DocModel>();
 
@@ -76,13 +77,14 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
 
 
 
-            Query query = new Query(@"SELECT C.HANDLE, C.DATA, C.NUMERO, C.NOME, C.DESCRICAO, C.LINK
+            Query query = new Query(@"SELECT C.HANDLE, C.DATA, C.NUMERO, C.NOME, C.DESCRICAO
                                         FROM K_GN_DOCUMENTOS C
                                         LEFT JOIN K_GN_DOCUMENTOPESSOAS B ON C.HANDLE = B.DOCUMENTO
                                         LEFT JOIN K_GN_PESSOAUSUARIOS A ON B.PESSOA = A.PESSOA
                                         WHERE (@USUARIO = A.USUARIO OR A.USUARIO IS NULL)
-                                        AND C.DATA BETWEEN :DATAINICIO AND :DATAFIM;
+                                        AND C.DATA BETWEEN CONVERT(DATETIME, :DATAINICIO, 103) AND CONVERT(DATETIME, :DATAFIM, 103);
                                         ");
+
             query.Parameters.Add(new Parameter("DATAINICIO", dataInicio));
             query.Parameters.Add(new Parameter("DATAFIM", dataFim));
             //List<EntityBase> registros = Entity.GetMany(EntityDefinition.GetByName("K_GN_DOCUMENTOS"), new Criteria()); ;
@@ -225,26 +227,46 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
 
         public List<Eventos> buscarEventos()
         {
-            string cor = ColorField.OleColorToHtmlHex(3150273);
+
+
+            //string cor = ColorField.OleColorToHtmlHex(3150273);
+            //List<Eventos> retorno = new List<Eventos>();
+            //retorno.Add(new Eventos()
+            //{
+            //    Handle = 1,
+            //    Descricao = "Descricao 1",
+            //    Data = DateTime.Parse("01/01/2022"),
+            //    Link = @"http://erpsuporte.com.br",
+            //    Nome = "Nome 1",
+            //    Color = cor
+            //});
+            //retorno.Add(new Eventos()
+            //{
+            //    Handle = 2,
+            //    Descricao = "Descricao 2",
+            //    Data = DateTime.Parse("01/01/2022"),
+            //    Link = @"http://erpsuporte.com.br",
+            //    Nome = "Nome 2",
+            //    Color = cor
+            //});
+
             List<Eventos> retorno = new List<Eventos>();
-            retorno.Add(new Eventos()
+            List<EntityBase> registros = Entity.GetMany(EntityDefinition.GetByName("K_GN_EVENTOS"), new Criteria());
+
+            foreach (EntityBase registro in registros)
             {
-                Handle = 1,
-                Descricao = "Descricao 1",
-                Data = DateTime.Parse("01/01/2022"),
-                Link = @"http://erpsuporte.com.br",
-                Nome = "Nome 1",
-                Color = cor
+                int? Color = ((ColorField)registro.Fields["COR"]).Value;
+                int colorInt = Color.Value;
+                retorno.Add(new Eventos()
+                {
+                    Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
+                    Descricao = Convert.ToString(registro.Fields["DESCRICAO"]),
+                    Data = Convert.ToDateTime(registro.Fields["DATA"]),
+                    Link = Convert.ToString(registro.Fields["LINK"]),
+                    Nome = Convert.ToString(registro.Fields["NOME"]),
+                    Color = ColorField.OleColorToHtmlHex(colorInt)
             });
-            retorno.Add(new Eventos()
-            {
-                Handle = 2,
-                Descricao = "Descricao 2",
-                Data = DateTime.Parse("01/01/2022"),
-                Link = @"http://erpsuporte.com.br",
-                Nome = "Nome 2",
-                Color = cor
-            });
+            }
             return retorno;
         }
         public FinanceiroModel buscarFinanceiro()
@@ -252,7 +274,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
             FinanceiroModel retorno = new FinanceiroModel();
             
             
-            Query query = new Query(@"SELECT A.HANDLE HADNLEDOCUMENTO,
+            Query query = new Query(@"SELECT A.HANDLE HANDLEDOCUMENTO,
                                                                B.HANDLE,
                                                                A.DATAEMISSAO,
                                                                B.DATAVENCIMENTO DataVencimento,
@@ -310,8 +332,8 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                                                    INNER JOIN FN_DOCUMENTOS B ON A.DOCUMENTO = B.HANDLE
                                                    INNER JOIN PD_PRODUTOS C ON A.PRODUTO = C.HANDLE
                                                    INNER JOIN GN_NATUREZASFISCAIS D ON A.CLASSIFICACAOFISCAL = D.HANDLE
-                                             WHERE B.DOCUMENTOORIGEM = :HADNLEDOCUMENTO");
-                query2.Parameters.Add(new Parameter("HADNLEDOCUMENTO", Convert.ToInt32(registro.Fields["HADNLEDOCUMENTO"])));
+                                             WHERE B.DOCUMENTOORIGEM = :HANDLEDOCUMENTO");
+                query2.Parameters.Add(new Parameter("HANDLEDOCUMENTO", Convert.ToInt32(registro.Fields["HANDLEDOCUMENTO"])));
                 var registros2 = query2.Execute();
                 List<FinanceiroProdutosModel> _Produtos = new List<FinanceiroProdutosModel>();
                 List<string> _CFOP = new List<string>();
@@ -439,59 +461,116 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
             return retorno;
         }
 
-        public List<ProgramacaoModel> buscarProgramacao(ProgramacaoBsucarModel request)
+        public List<ProgramacaoModel> buscarProgramacao(ProgramacaoBuscarModel request)
         {
             List<ProgramacaoModel> retorno = new List<ProgramacaoModel>();
-            retorno.Add(new ProgramacaoModel()
-            {
-                Handle = 1,
-                Produto = "Produto A",
-                Periodo = "Janeiro 2022",
-                Programado = 10
-            });
 
-            retorno.Add(new ProgramacaoModel()
+            //List<EntityBase> registros = Entity.GetMany(EntityDefinition.GetByName("K_GN_PROGRAMACAO"), new Criteria());
+
+            Query query = new Query(@"SELECT * FROM K_GN_PROGRAMACAO
+                                        WHERE PERIODO BETWEEN CONVERT(datetime, :INICIO , 103) AND CONVERT(datetime, :FIM, 103);");
+            
+            query.Parameters.Add(new Parameter("INICIO", request.Inicio));
+            query.Parameters.Add(new Parameter("FIM", request.Fim));
+            var registros = query.Execute();
+
+            foreach (EntityBase registro in registros)
             {
-                Handle = 2,
-                Produto = "Produto B",
-                Periodo = "Janeiro 2022",
-                Programado = 20
-            });
+                retorno.Add(new ProgramacaoModel() // adicionar filtro de periodo inicio fim
+                {
+                    Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
+                    Produto = Convert.ToString(registro.Fields["PRODUTO"]),
+                    Periodo = Convert.ToDateTime(registro.Fields["PERIODO"]),
+                    Programado = Convert.ToInt32(registro.Fields["PROGRAMADO"])
+                });
+            }
 
             return retorno;
+
+            //retorno.Add(new ProgramacaoModel()
+            //{
+            //    Handle = 1,
+            //    Produto = "Produto A",
+            //    Periodo = "Janeiro 2022",
+            //    Programado = 10
+            //});
+
+            //retorno.Add(new ProgramacaoModel()
+            //{
+            //    Handle = 2,
+            //    Produto = "Produto B",
+            //    Periodo = "Janeiro 2022",
+            //    Programado = 20
+            //});
         }
         public ResponseModel enviarSac(SacModelPost request)
         {
+            
+
             ResponseModel retorno = new ResponseModel();
-            retorno.status = 0;
+            retorno.status = 1;
             retorno.descricao = "Sucesso";
+
+            
+            EntityBase Sac = Entity.Create(EntityDefinition.GetByName("K_SAC"));
+            Sac.Fields["TITULO"] = request.Titulo;
+            Sac.Fields["MENSAGEM"] = request.Mensagem;
+            Sac.Fields["COR"] = new ColorField(255);
+            Sac.Fields["STATUS"] = new ListItem(1, "");
+            (Sac.Fields["USUARIOENVIO"] as EntityAssociation).Handle = BennerContext.Security.GetLoggedUserHandle();
+            Sac.Save();
+
 
             return retorno;
         }
         public List<SacModelGet> buscarSac()
         {
-            string cor = ColorField.OleColorToHtmlHex(3150273);
+            //string cor = ColorField.OleColorToHtmlHex(3150273);
             List<SacModelGet> retorno = new List<SacModelGet>();
-            retorno.Add(new SacModelGet()
+            //retorno.Add(new SacModelGet()
+            //{
+            //    Handle = 1,
+            //    Numero = 1,
+            //    Titulo = "Titulo 1",
+            //    Mensagem = "Mensagem 1",
+            //    Resposta = "Resposta 1",
+            //    Color = cor,
+            //    Status = 1
+            //});
+            //retorno.Add(new SacModelGet()
+            //{
+            //    Handle = 2,
+            //    Numero = 2,
+            //    Titulo = "Titulo 2",
+            //    Mensagem = "Mensagem 2",
+            //    Resposta = "Resposta 2",
+            //    Color = cor,
+            //    Status = 2
+            //});
+            Query query = new Query(@"SELECT * FROM K_SAC
+                                        WHERE USUARIOENVIO = @USUARIO");
+            var registros = query.Execute();
+            foreach (var registro in registros)
             {
-                Handle = 1,
-                Numero = 1,
-                Titulo = "Titulo 1",
-                Mensagem = "Mensagem 1",
-                Resposta = "Resposta 1",
-                Color = cor,
-                Status = 1
-            });
-            retorno.Add(new SacModelGet()
-            {
-                Handle = 2,
-                Numero = 2,
-                Titulo = "Titulo 2",
-                Mensagem = "Mensagem 2",
-                Resposta = "Resposta 2",
-                Color = cor,
-                Status = 2
-            });
+                //int? Color = ((ColorField)registro.Fields["COR"]).Value;
+                //int colorInt = Color.Value;
+                int corInt = Convert.ToInt32(registro.Fields["COR"]);
+                //string corHexa = corInt.ToString("X");
+                retorno.Add(new SacModelGet()
+                {
+                    Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
+                    Numero = Convert.ToInt32(registro.Fields["NUMERO"]),
+                    Titulo = Convert.ToString(registro.Fields["TITULO"]),
+                    Mensagem = Convert.ToString(registro.Fields["MENSAGEM"]),
+                    Resposta = Convert.ToString(registro.Fields["RESPOSTA"]),
+                    Color = ColorField.OleColorToHtmlHex(corInt),//"#" + corInt.ToString("X").PadRight(6, '0'),
+                    Status = Convert.ToInt32(registro.Fields["STATUS"])
+                });
+            }
+                
+
+
+            
             return retorno;
         }
 

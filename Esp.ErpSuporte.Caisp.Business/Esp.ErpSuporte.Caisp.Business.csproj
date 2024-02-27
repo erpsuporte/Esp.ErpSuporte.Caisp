@@ -63,6 +63,13 @@
     <Compile Include="Entidades\GnDocumentos.userinterface.cs">
       <DependentUpon>GnDocumentos.cs</DependentUpon>
     </Compile>
+    <Compile Include="Entidades\Sac.cs" />
+    <Compile Include="Entidades\Sac.properties.cs">
+      <DependentUpon>Sac.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entidades\Sac.userinterface.cs">
+      <DependentUpon>Sac.cs</DependentUpon>
+    </Compile>
     <Compile Include="Interfaces\Caisp\ICaisp.cs" />
     <Compile Include="Modelos\Caisp\CaispModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
