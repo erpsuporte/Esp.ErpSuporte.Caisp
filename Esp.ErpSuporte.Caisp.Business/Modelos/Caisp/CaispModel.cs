@@ -48,12 +48,13 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
         public string Produto { get; set; }
         public string Variacao { get; set; }
         public int QuantidadeRecebida { get; set; }
+        public string Link { get; set; }
     }
 
     public class EntregasPeriodoBuscaModel
     {
-        public DateTime DataInicio { get; set; }
-        public DateTime DataFim { get; set; }
+        public string DataInicio { get; set; }
+        public string DataFim { get; set; }
     }
 
     public class EntregasDiaBuscarModel

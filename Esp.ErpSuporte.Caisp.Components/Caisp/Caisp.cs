@@ -2,6 +2,7 @@
 using Benner.Tecnologia.Common;
 using Benner.Tecnologia.Common.Components;
 using Benner.Tecnologia.Common.EnterpriseServiceLibrary;
+using Benner.Tecnologia.Common.Services;
 using Esp.ErpSuporte.Caisp.Business.Interfaces.Caisp;
 using Esp.ErpSuporte.Caisp.Business.Modelos.Caisp;
 using Microsoft.Win32;
@@ -205,22 +206,83 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
         public List<EntregasItensModel> buscarEntregasPeriodo(EntregasPeriodoBuscaModel request)
         {
             List<EntregasItensModel> retorno = new List<EntregasItensModel>();
-            retorno.Add(new EntregasItensModel()
+            //retorno.Add(new EntregasItensModel()
+            //{
+            //    Handle = 1,
+            //    CodigoReferencia = "CodigoReferencia 1",
+            //    Produto = "Produto 1",
+            //    QuantidadeRecebida = 100
+            //}
+            //        );
+            //retorno.Add(new EntregasItensModel()
+            //{
+            //    Handle = 2,
+            //    CodigoReferencia = "CodigoReferencia 2",
+            //    Produto = "Produto 2",
+            //    QuantidadeRecebida = 200
+            //}
+            //);
+            Query query = new Query(@"SELECT A.HANDLE,
+                                          A.DATAENTRADA,
+                                          A.NUMERONOTAFISCAL,
+                                          A.K_CONFERENTE,
+                                          A.K_ASSINATURA
+                                                FROM CP_RECEBIMENTOFISICOPAI A
+                                                INNER JOIN GN_PESSOAS B ON A.FORNECEDOR = B.HANDLE
+                                                WHERE A.FORNECEDOR IN (SELECT PESSOA FROM K_GN_PESSOAUSUARIOS U WHERE U.USUARIO = @USUARIO) 
+                                                   AND CONVERT(DATE, A.DATAENTRADA, 103) BETWEEN CONVERT(DATE, :DATAINICIO, 103) AND CONVERT(DATE, :DATAFIM, 103)");
+            query.Parameters.Add(new Parameter("DATAINICIO", request.DataInicio));
+            query.Parameters.Add(new Parameter("DATAFIM", request.DataFim));
+            //List<DocModel> retorno = 
+
+            var registros = query.Execute();//como converter
+            //List<EntityBase> registros2  = query.Execute();
+
+            string url = "http://loalhost/CORP_CAISP_DEV_20230328/Pages/Public/BaixarRelatorio.ashx";
+            //Gerar um link com dois parâmetros
+            var urlLinkDefinition = new UrlLinkDefinition(url);
+            //Handle 
+
+            urlLinkDefinition.Parameters.Add("HandleRelatorio", "2338");
+            urlLinkDefinition.Parameters.Add("Criteria", $"AND CONVERT(DATE, A.DATAENTRADA, 103) BETWEEN CONVERT(DATE, {request.DataInicio}, 103) AND CONVERT(DATE, {request.DataFim}, 103)");
+
+            //Handle handle = 2338;
+            //Criteria criteria = new Criteria("AND CONVERT(DATE, A.DATAENTRADA, 103) BETWEEN CONVERT(DATE, :DATAINICIO, 103) AND CONVERT(DATE, :DATAFIM, 103)");
+            //criteria.Parameters.Add("DATAINICIO", request.DataInicio);
+            //criteria.Parameters.Add("DATAFIM", request.DataFim);
+
+            ReportPrinter reportPrinter = new ReportPrinter(2338);//(2338);
+            reportPrinter.SqlWhere = $"AND CONVERT(DATE, A.DATAENTRADA, 103) BETWEEN CONVERT(DATE, {request.DataInicio}, 103) AND CONVERT(DATE, {request.DataFim}, 103)";
+            reportPrinter.Preview();//ExportToFile(@"C:\Users\Arthur\AppData\Local\Temp\2\teste.pdf");
+           
+
+            foreach (EntityBase registro in registros)
             {
-                Handle = 1,
-                CodigoReferencia = "CodigoReferencia 1",
-                Produto = "Produto 1",
-                QuantidadeRecebida = 100
+                Query query2 = new Query(@"SELECT A.HANDLE,
+                                           B.CODIGOREFERENCIA,
+                                           B.NOME,
+                                           A.QTDEENTREGA
+                                             FROM CP_RECEBIMENTOFISICO A
+                                               INNER JOIN PD_PRODUTOS B ON A.PRODUTO = B.HANDLE
+                                                WHERE A.RECEBIMENTOFISICOPAI = :RECEBIMENTOFISICOPAI");
+                query2.Parameters.Add(new Parameter("RECEBIMENTOFISICOPAI", Convert.ToInt32(registro.Fields["HANDLE"])));
+
+                
+
+                var registros2 = query2.Execute();
+                foreach (EntityBase registro2 in registros2)
+                {
+                    retorno.Add(new EntregasItensModel()
+                    {
+                        Handle = Convert.ToInt32(registro2.Fields["HANDLE"]),
+                        CodigoReferencia = Convert.ToString(registro2.Fields["CODIGOREFERENCIA"]),
+                        Produto = Convert.ToString(registro2.Fields["NOME"]),
+                        QuantidadeRecebida = Convert.ToInt32(registro2.Fields["QTDEENTREGA"]),
+                        Link= urlLinkDefinition.GetEncodedUrl()
+
+                    });
+                }
             }
-                    );
-            retorno.Add(new EntregasItensModel()
-            {
-                Handle = 2,
-                CodigoReferencia = "CodigoReferencia 2",
-                Produto = "Produto 2",
-                QuantidadeRecebida = 200
-            }
-            );
 
             return retorno;
         }
@@ -265,7 +327,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                     Link = Convert.ToString(registro.Fields["LINK"]),
                     Nome = Convert.ToString(registro.Fields["NOME"]),
                     Color = ColorField.OleColorToHtmlHex(colorInt)
-            });
+                });
             }
             return retorno;
         }

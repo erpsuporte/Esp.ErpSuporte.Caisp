@@ -22,13 +22,19 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
     {
         protected override void Saving()
         {
-            if (this.Resposta != null)
+            if ((this.Fields["USUARIORESPOSTA"] as EntityAssociation).ToString() == "" || (this.Fields["USUARIORESPOSTA"] as EntityAssociation).Handle == BennerContext.Security.GetLoggedUserHandle())
             {
                 this.Status = SacStatusListaItens.ItemRespondido;
                 this.Cor = new ColorField(32768);
                 (this.Fields["USUARIORESPOSTA"] as EntityAssociation).Handle = BennerContext.Security.GetLoggedUserHandle();
                 base.Saving();
             }
+            else 
+            {
+                throw new BusinessException("Alteração negada: Usuario diferente da ultima alteração");
+            }
+            
+            
         }
     }
 }

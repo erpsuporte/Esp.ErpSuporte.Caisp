@@ -69,7 +69,7 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         /// <returns></returns>
         [HttpGet]
         [Route("buscarEntregasPeriodo")]
-        public IHttpActionResult buscarEntregasPeriodo([FromBody] EntregasPeriodoBuscaModel request)
+        public IHttpActionResult buscarEntregasPeriodo([FromUri] EntregasPeriodoBuscaModel request)
         {
 
             List<EntregasItensModel> retorno = componente.buscarEntregasPeriodo(request);
