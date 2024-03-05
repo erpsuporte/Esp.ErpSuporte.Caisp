@@ -251,10 +251,11 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
             //criteria.Parameters.Add("DATAINICIO", request.DataInicio);
             //criteria.Parameters.Add("DATAFIM", request.DataFim);
 
-            ReportPrinter reportPrinter = new ReportPrinter(2338);//(2338);
-            reportPrinter.SqlWhere = $"AND CONVERT(DATE, A.DATAENTRADA, 103) BETWEEN CONVERT(DATE, {request.DataInicio}, 103) AND CONVERT(DATE, {request.DataFim}, 103)";
-            reportPrinter.Preview();//ExportToFile(@"C:\Users\Arthur\AppData\Local\Temp\2\teste.pdf");
-           
+            ReportPrinter reportPrinter = new ReportPrinter(2338);
+            //reportPrinter.SqlWhere = $"AND CONVERT(DATE, A.DATAENTRADA, 103) BETWEEN CONVERT(DATE, {request.DataInicio}, 103) AND CONVERT(DATE, {request.DataFim}, 103)";
+            //reportPrinter.Preview();
+            reportPrinter.ExportToFile("teste.pdf");//ExportToFile(@"C:\Users\Arthur\AppData\Local\Temp\2\teste.pdf");
+
 
             foreach (EntityBase registro in registros)
             {
@@ -357,7 +358,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
 
                                                                AND
 
-                                                                   A.ENTRADASAIDA = 'E'
+                                                                   A.ENTRADASAIDA IN ('E', 'S') 
 
                                                                AND
 
@@ -377,6 +378,8 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                                                                    AND (((B.VALORESBAIXADOS IS NULL OR B.VALORESBAIXADOS = 0) AND (B.VALOR > 0)))
                                                               ORDER BY B.AP");
 
+            // A.ENTRADASAIDA IN ('E', 'S')  tratar como E sinal positivo ou S negativo  (caso seja um unico select).
+            // caso sejam select separados um para E outro para S.
 
             //System.NullReferenceException: 'Referência de objeto não definida para uma instância de um objeto.'
             //List<DocModel> retorno = 
@@ -429,13 +432,15 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                         Operacao = Convert.ToString(registro.Fields["Operacao"]),
                         Historico = Convert.ToString(registro.Fields["HISTORICO"]),
                         Observacao = Convert.ToString(registro.Fields["Observacao"]),
+                        EntradaSaida = Convert.ToString(registro.Fields["ENTRADASAIDA"]),
                         Produtos = _Produtos,
                 });
-                
+
 
                 // Adicionando Produtos ao último item em retorno.Itens
 
-                retorno.Saldo = 1;// depois peguntar se é a mesma coisa que valor
+                retorno.Saldo = 1;// depois peguntar se é a mesma coisa que valor mesmo estilo Mega 100 SUM 
+
             }
             return retorno;
             //FinanceiroModel retorno = new FinanceiroModel()

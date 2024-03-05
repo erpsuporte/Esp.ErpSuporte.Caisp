@@ -90,6 +90,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
         public string CFOP { get; set; }
         public string Historico { get; set; }
         public string Observacao { get; set; }
+        public string EntradaSaida { get; set; }
         public List<FinanceiroProdutosModel> Produtos { get; set; }
     }
 
@@ -104,11 +105,12 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
 
     public class CardModel
     {
-        public int Handle { get; set; }
-        public string Valor { get; set; }
-        public string Nome { get; set; }
-        public string Color { get; set; }
-        public string Screen { get; set; }
+        public int Handle { get; set; }//hanlde
+        public string Valor { get; set; }// resultado SELECT SQL
+        public string CONSULTA { get; set; }//SELECT SQL
+        public string Nome { get; set; }//NOME
+        public string Color { get; set; }//COR
+        public string Screen { get; set; }//STRING
     }
 
     public class HomeModel
@@ -137,10 +139,10 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
 
     public class UserInfoModel
     {
-        public string AvatarBase64 { get; set; }
-        public string Nome { get; set; }
-        public DateTime DataInicioCooperado { get; set; }
-        public int CapitalSocial { get; set; }
+        public string AvatarBase64 { get; set; } //Z_GRUPOUSUARIO//Figura IMAGEM
+        public string Nome { get; set; }//Z_GRUPOUSUARIO
+        public DateTime DataInicioCooperado { get; set; }//Z_GRUPOUSUARIO DD?MM/YYYY
+        public int CapitalSocial { get; set; } //EMPRESAS
     }
 
     public class ProgramacaoModel
