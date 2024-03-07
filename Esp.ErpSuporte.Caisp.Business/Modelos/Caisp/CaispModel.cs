@@ -107,7 +107,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
     {
         public int Handle { get; set; }//hanlde
         public string Valor { get; set; }// resultado SELECT SQL
-        public string CONSULTA { get; set; }//SELECT SQL
+        public string ConsultaSQL { get; set; }//SELECT SQL
         public string Nome { get; set; }//NOME
         public string Color { get; set; }//COR
         public string Screen { get; set; }//STRING

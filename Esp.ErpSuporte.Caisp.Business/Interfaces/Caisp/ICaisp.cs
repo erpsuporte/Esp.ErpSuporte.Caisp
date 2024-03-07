@@ -10,7 +10,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Interfaces.Caisp
     public interface ICaisp
     {
         List<ContatosModel> buscarContatos(); //-TABELA -UI -API Funcionando - TESTE
-        List<DocModel> buscarDoc(string DataInicio, string DataFim); //-TABELA -UI -API Funcionando - TESTE //remover incio e fim
+        List<DocModel> buscarDoc(int tipo); //-TABELA -UI -API Funcionando - TESTE //remover incio e fim
         //Atas --CAMPO TIPO  vem como parametro na rota
         //Estatutos
         //Circulares Normativas
@@ -28,8 +28,8 @@ namespace Esp.ErpSuporte.Caisp.Business.Interfaces.Caisp
         //pagina para baixar xml
 
 
-        List<CardModel> buscarCard();//Wes Pagina Card campo inativo // Tabela
-        UserInfoModel buscarUserInfo();//
+        List<CardModel> buscarCard();// -TABELA -UI -API -Funcionando -TESTE
+        UserInfoModel buscarUserInfo();// -API -Funcionando -TESTE
         List<ProgramacaoModel> buscarProgramacao(ProgramacaoBuscarModel request);// - TABELA BUILDER -UI WEB -DEV API -TESTE
         ResponseModel enviarSac(SacModelPost request); // TABELA BUILDER SAC  INSERIR REGISTRO API
         List<SacModelGet> buscarSac(); // BUSCAR SAC DO USUARIO LOGADO API -GESTÂO ESTADO WEB  /DATA RECEBIDA /REPOSTA? /QUEM RECEBEU /NOME: OUVIDORIA e EMAIL Configuravel

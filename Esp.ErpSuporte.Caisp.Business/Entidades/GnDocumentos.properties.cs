@@ -32,7 +32,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
         
         /// <summary>
         /// Arquivo pdf (ARQUIVOPDF.)
-        /// Opcional = N, Invisível = False
+        /// Opcional = S, Invisível = False
         /// </summary>
         [System.CodeDom.Compiler.GeneratedCodeAttribute("BEF Code Generator", "20.0.90.3")]
         Benner.Tecnologia.Common.FileField ArquivoPdf
@@ -64,11 +64,11 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
         }
         
         /// <summary>
-        /// Link (LINK.)
-        /// Opcional = N, Invisível = False, Tamanho = 30
+        /// Editado (EDITADO.)
+        /// Opcional = N, Invisível = True, Default = False
         /// </summary>
         [System.CodeDom.Compiler.GeneratedCodeAttribute("BEF Code Generator", "20.0.90.3")]
-        string Link
+        System.Nullable<bool> Editado
         {
             get;
             set;
@@ -95,6 +95,34 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
             get;
             set;
         }
+        
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("BEF Code Generator", "20.0.90.3")]
+        ICollection<Handle> PessoasAutorizadasHandles
+        {
+            get;
+        }
+        
+        /// <summary>
+        /// Privacidade Do Documento (PRIVACIDADE.)
+        /// Opcional = N, Invisível = False
+        /// </summary>
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("BEF Code Generator", "20.0.90.3")]
+        GnDocumentosPrivacidadeDoDocumentoTabItens PrivacidadeDoDocumento
+        {
+            get;
+            set;
+        }
+        
+        /// <summary>
+        /// Tipo (TIPO.)
+        /// Opcional = N, Invisível = False
+        /// </summary>
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("BEF Code Generator", "20.0.90.3")]
+        GnDocumentosTipoListaItens Tipo
+        {
+            get;
+            set;
+        }
     }
     
     /// <summary>
@@ -117,6 +145,96 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
     }
     
     /// <summary>
+    /// Esta classe contém os itens do campo PRIVACIDADE.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("BEF Code Generator", "20.0.90.3")]
+    public class GnDocumentosPrivacidadeDoDocumentoTabItens : TabItems<GnDocumentosPrivacidadeDoDocumentoTabItens>
+    {
+        
+        /// <summary>
+        /// Valor = 1, Item = Publico.
+        /// </summary>
+        public static GnDocumentosPrivacidadeDoDocumentoTabItens ItemPublico;
+        
+        /// <summary>
+        /// Valor = 2, Item = Privado.
+        /// </summary>
+        public static GnDocumentosPrivacidadeDoDocumentoTabItens ItemPrivado;
+        
+		public static implicit operator GnDocumentosPrivacidadeDoDocumentoTabItens(int index)
+		{
+			return GetByIndex(index);
+		}
+
+		public static implicit operator int(GnDocumentosPrivacidadeDoDocumentoTabItens item)
+		{
+			return item.Index;
+		}
+        
+        static GnDocumentosPrivacidadeDoDocumentoTabItens()
+        {
+			ItemPublico = new GnDocumentosPrivacidadeDoDocumentoTabItens {Index = 1, Description ="Publico"};
+			ItemPrivado = new GnDocumentosPrivacidadeDoDocumentoTabItens {Index = 2, Description ="Privado"};
+
+			Items.Add(ItemPublico);
+			Items.Add(ItemPrivado);
+
+        }
+    }
+    
+    /// <summary>
+    /// Esta classe contém os itens do campo TIPO.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("BEF Code Generator", "20.0.90.3")]
+    public class GnDocumentosTipoListaItens : ListItems<GnDocumentosTipoListaItens>
+    {
+        
+        /// <summary>
+        /// Valor = 1, Item = Atas.
+        /// </summary>
+        public static GnDocumentosTipoListaItens ItemAtas;
+        
+        /// <summary>
+        /// Valor = 2, Item = Estatutos.
+        /// </summary>
+        public static GnDocumentosTipoListaItens ItemEstatutos;
+        
+        /// <summary>
+        /// Valor = 3, Item = Circulares Normativas.
+        /// </summary>
+        public static GnDocumentosTipoListaItens ItemCircularesNormativas;
+        
+        /// <summary>
+        /// Valor = 4, Item = Desenvolvimento Agricola.
+        /// </summary>
+        public static GnDocumentosTipoListaItens ItemDesenvolvimentoAgricola;
+        
+		public static implicit operator GnDocumentosTipoListaItens(int index)
+		{
+			return GetByIndex(index);
+		}
+
+		public static implicit operator int(GnDocumentosTipoListaItens item)
+		{
+			return item.Index;
+		}
+        
+        static GnDocumentosTipoListaItens()
+        {
+			ItemAtas = new GnDocumentosTipoListaItens {Index = 1, Description ="Atas"};
+			ItemEstatutos = new GnDocumentosTipoListaItens {Index = 2, Description ="Estatutos"};
+			ItemCircularesNormativas = new GnDocumentosTipoListaItens {Index = 3, Description ="Circulares Normativas"};
+			ItemDesenvolvimentoAgricola = new GnDocumentosTipoListaItens {Index = 4, Description ="Desenvolvimento Agricola"};
+
+			Items.Add(ItemAtas);
+			Items.Add(ItemEstatutos);
+			Items.Add(ItemCircularesNormativas);
+			Items.Add(ItemDesenvolvimentoAgricola);
+
+        }
+    }
+    
+    /// <summary>
     /// GnDocumentos
     /// </summary>
     [EntityDefinitionName("K_GN_DOCUMENTOS")]
@@ -132,15 +250,18 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
 			public const string ArquivoPdf = "ARQUIVOPDF";
 			public const string Data = "DATA";
 			public const string Descricao = "DESCRICAO";
-			public const string Link = "LINK";
+			public const string Editado = "EDITADO";
 			public const string Nome = "NOME";
 			public const string Numero = "NUMERO";
+			public const string PessoasAutorizadas = "PESSOASAUTORIZADAS";
+			public const string PrivacidadeDoDocumento = "PRIVACIDADE";
+			public const string Tipo = "TIPO";
 		}
 
         
         /// <summary>
         /// Arquivo pdf (ARQUIVOPDF.)
-        /// Opcional = N, Invisível = False
+        /// Opcional = S, Invisível = False
         /// </summary>
         [System.CodeDom.Compiler.GeneratedCodeAttribute("BEF Code Generator", "20.0.90.3")]
         public Benner.Tecnologia.Common.FileField ArquivoPdf
@@ -204,19 +325,19 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
         }
         
         /// <summary>
-        /// Link (LINK.)
-        /// Opcional = N, Invisível = False, Tamanho = 30
+        /// Editado (EDITADO.)
+        /// Opcional = N, Invisível = True, Default = False
         /// </summary>
         [System.CodeDom.Compiler.GeneratedCodeAttribute("BEF Code Generator", "20.0.90.3")]
-        public string Link
+        public System.Nullable<bool> Editado
         {
             get
             {
-                return Fields["LINK"] as System.String;
+                return Fields["EDITADO"] as System.Nullable<System.Boolean>;
             }
             set
             {
-                Fields["LINK"] = value;
+                Fields["EDITADO"] = value;
             }
         }
         
@@ -253,5 +374,57 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
                 Fields["NUMERO"] = value;
             }
         }
+        
+        
+        
+        
+        
+        /// <summary>
+        /// Privacidade Do Documento (PRIVACIDADE.)
+        /// Opcional = N, Invisível = False
+        /// </summary>
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("BEF Code Generator", "20.0.90.3")]
+        public GnDocumentosPrivacidadeDoDocumentoTabItens PrivacidadeDoDocumento
+        {
+            get
+            {
+                TabItem tabItem = Fields["PRIVACIDADE"] as TabItem;
+				if (tabItem != null)
+					return new GnDocumentosPrivacidadeDoDocumentoTabItens { Index = tabItem.Value, Description = tabItem.Text };
+				return null;
+            }
+            set
+            {
+                if (value != null)
+					Fields["PRIVACIDADE"] = new TabItem(value.Index, value.Description);
+				else
+					Fields["PRIVACIDADE"] = null;
+            }
+        }
+        
+        /// <summary>
+        /// Tipo (TIPO.)
+        /// Opcional = N, Invisível = False
+        /// </summary>
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("BEF Code Generator", "20.0.90.3")]
+        public GnDocumentosTipoListaItens Tipo
+        {
+            get
+            {
+                ListItem listItem = Fields["TIPO"] as ListItem;
+				if (listItem != null)
+					return new GnDocumentosTipoListaItens { Index = listItem.Value, Description = listItem.Text };
+				return null;
+            }
+            set
+            {
+                if (value != null)
+					Fields["TIPO"] = new ListItem(value.Index, value.Description);
+				else
+					Fields["TIPO"] = null;
+            }
+        }
+
+        public ICollection<Handle> PessoasAutorizadasHandles => throw new NotImplementedException();
     }
 }

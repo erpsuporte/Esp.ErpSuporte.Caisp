@@ -63,6 +63,13 @@
     <Compile Include="Entidades\GnDocumentos.userinterface.cs">
       <DependentUpon>GnDocumentos.cs</DependentUpon>
     </Compile>
+    <Compile Include="Entidades\KGnCards.cs" />
+    <Compile Include="Entidades\KGnCards.properties.cs">
+      <DependentUpon>KGnCards.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entidades\KGnCards.userinterface.cs">
+      <DependentUpon>KGnCards.cs</DependentUpon>
+    </Compile>
     <Compile Include="Entidades\Sac.cs" />
     <Compile Include="Entidades\Sac.properties.cs">
       <DependentUpon>Sac.cs</DependentUpon>

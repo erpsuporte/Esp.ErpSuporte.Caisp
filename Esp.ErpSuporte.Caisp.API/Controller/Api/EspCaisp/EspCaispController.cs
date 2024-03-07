@@ -44,10 +44,10 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         /// <returns></returns>
         [HttpGet]
         [Route("buscarDoc")]// Criar pagina de cadastro de pessoas e pessoausuarios no Wes
-        public IHttpActionResult buscarDoc(string DataIncio, string DataFim)
+        public IHttpActionResult buscarDoc(int tipo)
         {
 
-            List<DocModel> retorno = componente.buscarDoc(DataIncio, DataFim);
+            List<DocModel> retorno = componente.buscarDoc(tipo);
             return Ok(retorno);
         }
 
