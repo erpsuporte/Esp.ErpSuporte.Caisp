@@ -27,6 +27,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
         {
             base.Visualization.Fields["PRIVACIDADE"].ReadOnly = true;
             base.Visualization.Fields["PESSOASAUTORIZADAS"].ReadOnly = true;
+            base.Visualization.Fields["PESSOASAUTORIZADAS"].Visible = false;
         }
         
         protected override void Edited()

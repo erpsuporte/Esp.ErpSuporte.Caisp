@@ -78,7 +78,9 @@
       <DependentUpon>Sac.cs</DependentUpon>
     </Compile>
     <Compile Include="Interfaces\Caisp\ICaisp.cs" />
+    <Compile Include="Interfaces\Caisp\INotificacaoSac.cs" />
     <Compile Include="Modelos\Caisp\CaispModel.cs" />
+    <Compile Include="Modelos\Caisp\NotificacaoSacRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

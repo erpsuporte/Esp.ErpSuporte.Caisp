@@ -1,4 +1,5 @@
 ﻿using Benner.Tecnologia.Business;
+using Benner.Tecnologia.Business.Tasks;
 using Benner.Tecnologia.Common;
 using Benner.Tecnologia.Common.Components;
 using Benner.Tecnologia.Common.EnterpriseServiceLibrary;
@@ -633,6 +634,21 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
             Sac.Fields["STATUS"] = new ListItem(1, "");
             (Sac.Fields["USUARIOENVIO"] as EntityAssociation).Handle = BennerContext.Security.GetLoggedUserHandle();
             Sac.Save();
+
+            try
+            {
+                NotificacaoSacRequest requestemail = new NotificacaoSacRequest("ath.silva.antunes@gmail.com", request.Titulo, request.Mensagem);
+                
+                BusinessTask.Factory.NewComponentTask<INotificacaoSac>()
+                        .WithDescription("Notificação de aprovação")
+                        .WithNotification()
+                        .WithRequestValue(requestemail)
+                        .Start();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
 
 
             return retorno;

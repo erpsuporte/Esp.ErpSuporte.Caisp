@@ -35,8 +35,9 @@
       <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\Benner.Tecnologia.Business.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Ninject">
-      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\Ninject.dll</HintPath>
+    <Reference Include="NINJECT, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Benner\CORP_MEGA_DEV_20220217\NINJECT.DLL</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />

@@ -10,6 +10,7 @@ namespace Esp.ErpSuporte.Caisp.ESPECIFICO.IOC
         public override void Load()
         {
             BusinessComponent.Register<ICaisp, CaispComponente>(Kernel);
+            BusinessComponent.Register<INotificacaoSac, NotificadorSacTask>(Kernel);
         }
     }
 }

@@ -9,6 +9,7 @@ namespace Esp.ErpSuporte.Wes.Caisp.ESPECIFICO.IOC
         public override void Load()
         {
             BusinessComponent.RegisterProxy<ICaisp>(Kernel);
+            BusinessComponent.RegisterProxy<INotificacaoSac>(Kernel);
         }
     }
 }
