@@ -4,6 +4,7 @@ using Benner.Tecnologia.Common;
 using Benner.Tecnologia.Common.Components;
 using Benner.Tecnologia.Common.EnterpriseServiceLibrary;
 using Benner.Tecnologia.Common.Services;
+using Benner.Tecnologia.Metadata.TransformData;
 using Esp.ErpSuporte.Caisp.Business.Interfaces.Caisp;
 using Esp.ErpSuporte.Caisp.Business.Modelos.Caisp;
 using Microsoft.Win32;
@@ -236,10 +237,10 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                                                    AND CONVERT(DATE, A.DATAENTRADA, 103) BETWEEN CONVERT(DATE, :DATAINICIO, 103) AND CONVERT(DATE, :DATAFIM, 103)");
             query.Parameters.Add(new Parameter("DATAINICIO", request.DataInicio));
             query.Parameters.Add(new Parameter("DATAFIM", request.DataFim));
-            //List<DocModel> retorno = 
+            
 
-            var registros = query.Execute();//como converter
-            //List<EntityBase> registros2  = query.Execute();
+            var registros = query.Execute();
+            
 
             string url = "http://localhost/CORP_CAISP_DEV_20230328/Pages/Public/RelatorioItens.ashx";
             //Gerar um link com dois parâmetros
@@ -247,7 +248,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
             //Handle 
 
             urlLinkDefinition.Parameters.Add("HandleRelatorio", "2338");
-            urlLinkDefinition.Parameters.Add("Criteria", $"AND CONVERT(DATE, A.DATAENTRADA, 103) BETWEEN CONVERT(DATE, {request.DataInicio}, 103) AND CONVERT(DATE, {request.DataFim}, 103)");
+            //urlLinkDefinition.Parameters.Add("Criteria", $"AND CONVERT(DATE, A.DATAENTRADA, 103) BETWEEN CONVERT(DATE, {request.DataInicio}, 103) AND CONVERT(DATE, {request.DataFim}, 103)");
 
             //Handle handle = 2338;
             //Criteria criteria = new Criteria("AND CONVERT(DATE, A.DATAENTRADA, 103) BETWEEN CONVERT(DATE, :DATAINICIO, 103) AND CONVERT(DATE, :DATAFIM, 103)");
@@ -337,7 +338,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
         }
         public FinanceiroModel buscarFinanceiro()
         {
-            FinanceiroModel retorno = new FinanceiroModel();
+            FinanceiroModel retorno = new FinanceiroModel(); //SALDO PESSOA vinculados ao usuario logado
             Double Saldo = 0;
             Query query0 = new Query(@"SELECT
                                         LANCAMENTO_VALOR PARCELAVALOR,
@@ -412,7 +413,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                                         (
                                         SELECT *
                                         FROM FN_DOCUMENTOS DOCS
-                                        WHERE DOCS.HANDLE = A.DOCUMENTO
+                                        WHERE DOCS.HANDLE = A.DOCUMENTO AND DOCS.PESSOA IN (SELECT PESSOA FROM K_GN_PESSOAUSUARIOS U WHERE U.USUARIO = @USUARIO)
                                         AND
                                         (
                                         (
@@ -523,6 +524,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                                         FROM FN_MOVIMENTACOES A
                                         WHERE A.TIPOMOVIMENTO = 9
                                         AND A.DATA <= CONVERT(DATETIME, FLOOR(CONVERT(FLOAT, GETDATE())))
+                                        
                                         GROUP BY A.PARCELA
                                         ) ESTORNO ON A.PARCELA = ESTORNO.PARCELA
                                         WHERE B.VALOR > 0
@@ -774,7 +776,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                     Nome = Convert.ToString(registro.Fields["NOME"]),
                     Color = ColorField.OleColorToHtmlHex(corInt),
                     ConsultaSQL = Convert.ToString(registro.Fields["CONSULTASQL"]),
-                    Screen = Convert.ToString(registro.Fields["COR"]),
+                    Screen = Convert.ToString((registro.Fields["TELA"]as ListItem).Text),
                     Valor = Valor
                 });
             }
@@ -800,8 +802,16 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
             byte[] bytes;
             foreach (EntityBase registro in registros)
             {
-                bytes = (byte[])registro.Fields["K_AVATAR"];
-                retorno.AvatarBase64 = Convert.ToBase64String(bytes,4,bytes.Length - 4);
+                if (registro.Fields["K_AVATAR"] != null)
+                {
+                    bytes = (byte[])registro.Fields["K_AVATAR"];
+                    retorno.AvatarBase64 = Convert.ToBase64String(bytes, 4, bytes.Length - 4);
+                }
+                else
+                {
+                    retorno.AvatarBase64 = "";
+                }
+                 //tratar campo nulo
                 retorno.Nome = Convert.ToString(registro.Fields["NOME"]);
                 retorno.DataInicioCooperado = Convert.ToDateTime(registro.Fields["K_DATAINICIOCOOPERADO"]);
                 retorno.CapitalSocial = Convert.ToInt32(registro.Fields["K_CAPITALSOCIAL"]);
@@ -870,18 +880,10 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
             (Sac.Fields["USUARIOENVIO"] as EntityAssociation).Handle = BennerContext.Security.GetLoggedUserHandle();
             Sac.Save();
 
-            NotificacaoSacRequest requestemail = new NotificacaoSacRequest();
-            Query query = new Query(@"SELECT DESTINATARIO
-                                          FROM K_GN_EMAILDESTINATARIOS
-                                         WHERE ATIVO = 'S' ");
-            var registros = query.Execute();
-
-            foreach (EntityBase registro in registros)
-            {
-                requestemail.Add(Convert.ToString(registro.Fields["DESTINATARIO"]), $"Nova mensagem Ouvidoria: {request.Titulo}", request.Mensagem);
-            }
+            
             try
             {
+                NotificacaoSacRequest requestemail = new NotificacaoSacRequest("", $"Nova mensagem Ouvidoria: {request.Titulo}", request.Mensagem); 
                 BusinessTask.Factory.NewComponentTask<INotificacaoSac>()
                         .WithDescription("Notificação de Sac")
                         .WithNotification()

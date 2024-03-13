@@ -26,10 +26,15 @@ namespace Esp.ErpSuporte.Caisp.Business.Interfaces.Caisp
         
         List<NotasFiscalModel> buscarNotasFicais(BuscarNotasFiscalModel request);
         //  rota Consulta notas fiscais filtro no select inicio e fim
-        //  pagina para baixar xml
+        //  pagina para baixar xml 
         //--Notas fiscais 2 parametros rotas pegar Select depois
+        // numero doc,Dataemissão,Operação,CFOP,EntradaSaida
+        //List_parcelas DataVencimento,Valor,baixado,DataBaixa trazer ultima data de pagamento
+        //List_Itens Produto,qtde, valor un,total
+        //Observação
 
-        List<CardModel> buscarCard();// -TABELA -UI -API -Funcionando -TESTE(ok)
+
+        List<CardModel> buscarCard();// -TABELA -UI -API -Funcionando -TESTE(ok) //Screen Converter para List
         UserInfoModel buscarUserInfo();// -API -Funcionando -TESTE(ok)
         List<ProgramacaoModel> buscarProgramacao(ProgramacaoBuscarModel request);// - TABELA BUILDER -UI WEB -DEV API -TESTE(ok)
         ResponseModel enviarSac(SacModelPost request); // TABELA BUILDER SAC  INSERIR REGISTRO API(ok)
@@ -38,5 +43,6 @@ namespace Esp.ErpSuporte.Caisp.Business.Interfaces.Caisp
 
 
         //Componente que realiza requisição API e gerencia status, do Sac
+        //Papeis API
     }
 }

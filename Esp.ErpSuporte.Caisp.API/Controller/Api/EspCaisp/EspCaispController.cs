@@ -35,8 +35,18 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         [Route("buscarContatos")] 
         public IHttpActionResult buscarContatos()
         {
-            List<ContatosModel> retorno = componente.buscarContatos();
-            return Ok(retorno);
+            
+            try
+            {
+                List<ContatosModel> retorno = componente.buscarContatos();
+                return Ok(retorno);
+            }
+            catch (Exception ex)
+            {
+                return Content(
+                    System.Net.HttpStatusCode.InternalServerError,
+                    new { ex.Message });
+            }
         }
         /// <summary>
         /// Busca os documentos do Administrativo da Caisp
@@ -47,8 +57,18 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         public IHttpActionResult buscarDoc([FromUri] BuscaDocModel request)
         {
 
-            List<DocModel> retorno = componente.buscarDoc(request);
-            return Ok(retorno);
+            
+            try
+            {
+                List<DocModel> retorno = componente.buscarDoc(request);
+                return Ok(retorno);
+            }
+            catch (Exception ex)
+            {
+                return Content(
+                    System.Net.HttpStatusCode.InternalServerError,
+                    new { ex.Message });
+            }
         }
 
         /// <summary>
@@ -60,8 +80,18 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         public IHttpActionResult buscarEntregasDia()//([FromUri] EntregasDiaBuscarModel request)
         {
 
-            List<EntregasDiaModel> retorno = componente.buscarEntregasDia();
-            return Ok(retorno);
+            
+            try
+            {
+                List<EntregasDiaModel> retorno = componente.buscarEntregasDia();
+                return Ok(retorno);
+            }
+            catch (Exception ex)
+            {
+                return Content(
+                    System.Net.HttpStatusCode.InternalServerError,
+                    new { ex.Message });
+            }
         }
         /// <summary>
         /// Busca as entregas do periodo informado
@@ -72,8 +102,18 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         public IHttpActionResult buscarEntregasPeriodo([FromUri] EntregasPeriodoBuscaModel request)
         {
 
-            List<EntregasItensModel> retorno = componente.buscarEntregasPeriodo(request);
-            return Ok(retorno);
+            
+            try
+            {
+                List<EntregasItensModel> retorno = componente.buscarEntregasPeriodo(request);
+                return Ok(retorno);
+            }
+            catch (Exception ex)
+            {
+                return Content(
+                    System.Net.HttpStatusCode.InternalServerError,
+                    new { ex.Message });
+            }
         }
         /// <summary>
         /// Busca os proximos enventos da Caisp
@@ -84,8 +124,18 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         public IHttpActionResult buscarEventos()
         {
 
-            List<Eventos> retorno = componente.buscarEventos();
-            return Ok(retorno);
+            
+            try
+            {
+                List<Eventos> retorno = componente.buscarEventos();
+                return Ok(retorno);
+            }
+            catch (Exception ex)
+            {
+                return Content(
+                    System.Net.HttpStatusCode.InternalServerError,
+                    new { ex.Message });
+            }
         }
         /// <summary>
         /// Busca os documentod financeiros em Aberto do Cooperado
@@ -96,8 +146,18 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         public IHttpActionResult buscarFinanceiro()//
         {
 
-            FinanceiroModel retorno = componente.buscarFinanceiro();
-            return Ok(retorno);
+            
+            try
+            {
+                FinanceiroModel retorno = componente.buscarFinanceiro();
+                return Ok(retorno);
+            }
+            catch (Exception ex)
+            {
+                return Content(
+                    System.Net.HttpStatusCode.InternalServerError,
+                    new { ex.Message });
+            }
         }
         /// <summary>
         /// Busca as notas fiscais
@@ -108,8 +168,18 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         public IHttpActionResult buscarNotasFicais(BuscarNotasFiscalModel request)//
         {
 
-            List<NotasFiscalModel> retorno = componente.buscarNotasFicais(request);
-            return Ok(retorno);
+            
+            try
+            {
+                List<NotasFiscalModel> retorno = componente.buscarNotasFicais(request);
+                return Ok(retorno);
+            }
+            catch (Exception ex)
+            {
+                return Content(
+                    System.Net.HttpStatusCode.InternalServerError,
+                    new { ex.Message });
+            }
         }
         /// <summary>
         /// Busca os cards confirgurados no sistema 
@@ -119,9 +189,18 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         [Route("buscarCard")]
         public IHttpActionResult buscarCard()
         {
-
-            List<CardModel> retorno = componente.buscarCard();
-            return Ok(retorno);
+            try
+            {
+                List<CardModel> retorno = componente.buscarCard();
+                return Ok(retorno);
+            }
+            catch(Exception ex)
+            {
+                return Content(
+                    System.Net.HttpStatusCode.InternalServerError,
+                    new { ex.Message });
+            }
+            
         }
 
         /// <summary>
@@ -133,8 +212,18 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         public IHttpActionResult buscarUserInfo()
         {
 
-            UserInfoModel retorno = componente.buscarUserInfo();
-            return Ok(retorno);
+            
+            try
+            {
+                UserInfoModel retorno = componente.buscarUserInfo();
+                return Ok(retorno);
+            }
+            catch (Exception ex)
+            {
+                return Content(
+                    System.Net.HttpStatusCode.InternalServerError,
+                    new { ex.Message });
+            }
         }
         /// <summary>
         /// Busca a programação do periodo
@@ -145,8 +234,19 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         public IHttpActionResult buscarProgramacao([FromUri] ProgramacaoBuscarModel request)
         {
 
-            List<ProgramacaoModel> retorno = componente.buscarProgramacao(request);
-            return Ok(retorno);
+            
+            try
+            {
+                List<ProgramacaoModel> retorno = componente.buscarProgramacao(request);
+                return Ok(retorno);
+            }
+            catch (Exception ex)
+            {
+                return Content(
+                    System.Net.HttpStatusCode.InternalServerError,
+                    new { ex.Message });
+            }
+
         }
 
         /// <summary>
@@ -154,12 +254,22 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [Route("enviarSac")]
+        [Route("enviarSac")] //gerar excessão
         public IHttpActionResult enviarSac([FromBody] SacModelPost request)
         {
 
-            ResponseModel retorno = componente.enviarSac(request);
-            return Ok(retorno);
+            
+            try
+            {
+                ResponseModel retorno = componente.enviarSac(request);
+                return Ok(retorno);
+            }
+            catch (Exception ex)
+            {
+                return Content(
+                    System.Net.HttpStatusCode.InternalServerError,
+                    new { ex.Message });
+            }
         }
         /// <summary>
         /// Busca os registros de SAC
@@ -170,8 +280,18 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         public IHttpActionResult buscarSac()
         {
 
-            List<SacModelGet> retorno = componente.buscarSac();
-            return Ok(retorno);
+            
+            try
+            {
+                List<SacModelGet> retorno = componente.buscarSac();
+                return Ok(retorno);
+            }
+            catch (Exception ex)
+            {
+                return Content(
+                    System.Net.HttpStatusCode.InternalServerError,
+                    new { ex.Message });
+            }
         }
     }
 }
