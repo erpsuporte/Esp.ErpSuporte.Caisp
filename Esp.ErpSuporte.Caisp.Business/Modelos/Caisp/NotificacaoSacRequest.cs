@@ -16,7 +16,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
         {
             this.Destinatarios = new List<String>();
         }
-        public NotificacaoSacRequest(string email, string titulo, string mensagem) : this()
+        public void Add(string email, string titulo, string mensagem) 
         {
             this.Destinatarios.Add(email);
             this.Titulo = titulo;

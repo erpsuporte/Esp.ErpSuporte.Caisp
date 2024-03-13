@@ -19,6 +19,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
         public NotificadorSacTask(IMailService mailService)
         {
             _mailService = mailService;
+            
         }
 
         public void Run(NotificacaoSacRequest request)
@@ -29,7 +30,8 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
             msg.SendTo = string.Join(", ", request.Destinatarios);
             msg.Subject = request.Titulo;
             msg.Body = request.Mensagem;
-            msg.SystemUser = usuario.Handle;
+            msg.SystemUser = usuario.Handle; //BennerContext.Security.GetLoggedUserHandle();
+
             _mailService.Send(msg);
             
         }

@@ -25,7 +25,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
     {
         public int Handle { get; set; }
         public DateTime Data { get; set; }
-        public int Numero { get; set; }
+        public string Numero { get; set; }
         public string Nome { get; set; }
         public string Descricao { get; set; }
         public string UrlPDF { get; set; }
@@ -56,6 +56,10 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
         public string DataInicio { get; set; }
         public string DataFim { get; set; }
     }
+    public class BuscaDocModel
+    {
+        public int Tipo { get; set; }
+    }
 
     public class EntregasDiaBuscarModel
     {
@@ -74,7 +78,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
 
     public class FinanceiroModel
     {
-        public int Saldo { get; set; }
+        public double Saldo { get; set; }
         public List<FinanceiroItemModel> Itens { get; set; }
     }
 
@@ -94,6 +98,21 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
         public List<FinanceiroProdutosModel> Produtos { get; set; }
     }
 
+    public class BuscarNotasFiscalModel
+    {
+        public string DataInicio { get; set; }
+        public string DataFim { get; set; }
+    }
+
+    public class NotasFiscalModel
+    {
+        public int Handle { get; set; }
+        public DateTime Data { get; set; }
+        public string Numero { get; set; }
+        public double Valor { get; set; }
+        public string Nome { get; set; }
+        public string Descricao { get; set; }
+    }
     public class FinanceiroProdutosModel
     {
         public int Handle { get; set; }

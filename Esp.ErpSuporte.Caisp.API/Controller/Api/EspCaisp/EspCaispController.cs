@@ -32,7 +32,7 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("buscarContatos")] //Criar pagina de cadastro no Wes com contato
+        [Route("buscarContatos")] 
         public IHttpActionResult buscarContatos()
         {
             List<ContatosModel> retorno = componente.buscarContatos();
@@ -43,11 +43,11 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("buscarDoc")]// Criar pagina de cadastro de pessoas e pessoausuarios no Wes
-        public IHttpActionResult buscarDoc(int tipo)
+        [Route("buscarDoc")]
+        public IHttpActionResult buscarDoc([FromUri] BuscaDocModel request)
         {
 
-            List<DocModel> retorno = componente.buscarDoc(tipo);
+            List<DocModel> retorno = componente.buscarDoc(request);
             return Ok(retorno);
         }
 
@@ -56,11 +56,11 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("buscarEntregasDia")]// SELECT PARA ver o que recebeu, verificar qual usuario que tem entregas
-        public IHttpActionResult buscarEntregasDia([FromUri] EntregasDiaBuscarModel request)
+        [Route("buscarEntregasDia")]
+        public IHttpActionResult buscarEntregasDia()//([FromUri] EntregasDiaBuscarModel request)
         {
 
-            List<EntregasDiaModel> retorno = componente.buscarEntregasDia(request);
+            List<EntregasDiaModel> retorno = componente.buscarEntregasDia();
             return Ok(retorno);
         }
         /// <summary>
@@ -92,11 +92,23 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("buscarFinanceiro")] // adicionar selects que estão na área de trabalho 
-        public IHttpActionResult buscarFinanceiro()
+        [Route("buscarFinanceiro")] 
+        public IHttpActionResult buscarFinanceiro()//
         {
 
             FinanceiroModel retorno = componente.buscarFinanceiro();
+            return Ok(retorno);
+        }
+        /// <summary>
+        /// Busca as notas fiscais
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("buscarNotasFiscais")]
+        public IHttpActionResult buscarNotasFicais(BuscarNotasFiscalModel request)//
+        {
+
+            List<NotasFiscalModel> retorno = componente.buscarNotasFicais(request);
             return Ok(retorno);
         }
         /// <summary>

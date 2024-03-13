@@ -18,6 +18,8 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
 {
     public class CaispComponente : BusinessComponent<CaispComponente>, ICaisp
     {
+        public object Destinatarios { get; private set; }
+
         public List<ContatosModel> buscarContatos()
         {
 
@@ -54,7 +56,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
 
             return retorno;
         }
-        public List<DocModel> buscarDoc(int tipo)
+        public List<DocModel> buscarDoc(BuscaDocModel request)
         {
             List<DocModel> retorno = new List<DocModel>();
 
@@ -87,7 +89,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                                         AND C.TIPO = :TIPO
                                         ");
             
-            query.Parameters.Add(new Parameter("TIPO", tipo));
+            query.Parameters.Add(new Parameter("TIPO", request.Tipo));
             //List<EntityBase> registros = Entity.GetMany(EntityDefinition.GetByName("K_GN_DOCUMENTOS"), new Criteria()); ;
             var registros = query.Execute();
             
@@ -108,7 +110,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                 {
                     Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
                     Data = Convert.ToDateTime(registro.Fields["DATA"]),
-                    Numero = Convert.ToInt32(registro.Fields["NUMERO"]),
+                    Numero = Convert.ToString(registro.Fields["NUMERO"]),
                     Nome = Convert.ToString(registro.Fields["NOME"]),
                     Descricao = Convert.ToString(registro.Fields["DESCRICAO"]),
                     UrlPDF = urlLinkDefinition.GetEncodedUrl()
@@ -118,7 +120,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
 
 
         }
-        public List<EntregasDiaModel> buscarEntregasDia(EntregasDiaBuscarModel request)
+        public List<EntregasDiaModel> buscarEntregasDia()//(EntregasDiaBuscarModel request)
         {
             List<EntregasDiaModel> retorno = new List<EntregasDiaModel>();
             //retorno.Add(new EntregasDiaModel()
@@ -155,8 +157,9 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                                                 FROM CP_RECEBIMENTOFISICOPAI A
                                                 INNER JOIN GN_PESSOAS B ON A.FORNECEDOR = B.HANDLE
                                                 WHERE A.FORNECEDOR IN (SELECT PESSOA FROM K_GN_PESSOAUSUARIOS U WHERE U.USUARIO = @USUARIO) 
-                                                   AND CONVERT(DATE, A.DATAENTRADA, 103) = CONVERT(DATE, :DATA, 103)");
-            query.Parameters.Add(new Parameter("DATA", request.Data)); //System.NullReferenceException: 'Referência de objeto não definida para uma instância de um objeto.'
+                                                   AND CONVERT(DATE, A.DATAENTRADA, 103) = CONVERT(DATE, @NOW, 103)");
+            
+            //query.Parameters.Add(new Parameter("DATA", request.Data)); //System.NullReferenceException: 'Referência de objeto não definida para uma instância de um objeto.'
             //List<DocModel> retorno = 
 
             var registros = query.Execute();//como converter
@@ -238,7 +241,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
             var registros = query.Execute();//como converter
             //List<EntityBase> registros2  = query.Execute();
 
-            string url = "http://loalhost/CORP_CAISP_DEV_20230328/Pages/Public/BaixarRelatorio.ashx";
+            string url = "http://localhost/CORP_CAISP_DEV_20230328/Pages/Public/RelatorioItens.ashx";
             //Gerar um link com dois parâmetros
             var urlLinkDefinition = new UrlLinkDefinition(url);
             //Handle 
@@ -250,11 +253,11 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
             //Criteria criteria = new Criteria("AND CONVERT(DATE, A.DATAENTRADA, 103) BETWEEN CONVERT(DATE, :DATAINICIO, 103) AND CONVERT(DATE, :DATAFIM, 103)");
             //criteria.Parameters.Add("DATAINICIO", request.DataInicio);
             //criteria.Parameters.Add("DATAFIM", request.DataFim);
-
-            ReportPrinter reportPrinter = new ReportPrinter(2338);
+            
+            //ReportPrinter reportPrinter = new ReportPrinter(2338);
             //reportPrinter.SqlWhere = $"AND CONVERT(DATE, A.DATAENTRADA, 103) BETWEEN CONVERT(DATE, {request.DataInicio}, 103) AND CONVERT(DATE, {request.DataFim}, 103)";
             //reportPrinter.Preview();
-            reportPrinter.ExportToFile("teste.pdf");//ExportToFile(@"C:\Users\Arthur\AppData\Local\Temp\2\teste.pdf");
+            //reportPrinter.ExportToFile("teste.pdf");//ExportToFile(@"C:\Users\Arthur\AppData\Local\Temp\2\teste.pdf");
 
 
             foreach (EntityBase registro in registros)
@@ -335,58 +338,256 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
         public FinanceiroModel buscarFinanceiro()
         {
             FinanceiroModel retorno = new FinanceiroModel();
-            
-            
-            Query query = new Query(@"SELECT A.HANDLE HANDLEDOCUMENTO,
-                                                               B.HANDLE,
-                                                               A.DATAEMISSAO,
-                                                               B.DATAVENCIMENTO DataVencimento,
-                                                               B.VCTOPRORROGADO DataPagamento,
-                                                               A.DOCUMENTODIGITADO,
-                                                               B.VALOR - B.VALORESBAIXADOS Valor,
-                                                               O.NOME Operacao,
-                                                               NULL CFOP, --PEGA DE QQ ITEM
-                                                               A.HISTORICO,
-                                                               NULL Observacao
-                                                          FROM FN_DOCUMENTOS A
-                                                               JOIN FN_PARCELAS B ON (B.DOCUMENTO = A.HANDLE)
-                                                               JOIN GN_OPERACOES O ON (O.HANDLE = A.OPERACAO)
-                                                               LEFT OUTER JOIN TR_MODELOSFISCAIS M ON (M.HANDLE = A.MODELO)
-                                                         WHERE
+            Double Saldo = 0;
+            Query query0 = new Query(@"SELECT
+                                        LANCAMENTO_VALOR PARCELAVALOR,
 
-                                                                   A.OPERACAO = O.HANDLE
+                                        ROUND((LANCAMENTO_VALOR * (1-((B.VALOR - ((COALESCE(VALORPAGO,0) - COALESCE(VALORESTORNO,0)))) / B.VALOR))) * (COALESCE(VALORPAGO,0) - COALESCE(VALORESTORNO,0)),2) VALORESBAIXADOS,
 
-                                                               AND
+                                        LANCAMENTO_VALOR
+                                        -
+                                        ROUND((LANCAMENTO_VALOR / B.VALOR ) * (COALESCE(VALORPAGO,0) - COALESCE(VALORESTORNO,0)),2)
+                                        -
+                                        ROUND((COALESCE(B.ABATIMENTOS,0) * (LANCAMENTO_VALOR / B.VALOR )),2)
+                                        +
+                                        ROUND(((COALESCE(B.ACRESCIMOS,0)+ COALESCE(B.VALORDESAGIO,0)) * (LANCAMENTO_VALOR / B.VALOR )),2)
 
-                                                                   A.ENTRADASAIDA IN ('E', 'S') 
+                                        PARCELAVALORSALDO,
 
-                                                               AND
 
-                                                                   A.TIPODEMOVIMENTO = 1
-                                                               AND NOT EXISTS
-                                                               (
-                                                                   SELECT 1
-                                                                          FROM (SELECT 'R' ID
-                                                                                 UNION ALL SELECT 'F' ID
-                                                                                            UNION ALL SELECT 'A' ID
-                                                                                                       UNION ALL SELECT 'B' ID
-                                                                                                                  UNION ALL SELECT 'D' ID
-                                                                                                                             UNION ALL SELECT 'G' ID
-                                                                                                                                        UNION ALL SELECT 'H' ID) AB_LIST WHERE (A.ABRANGENCIA = AB_LIST.ID))
-                                                                   AND A.EHPREVISAO = 'N'
-                                                                   AND A.PESSOA IN (SELECT PESSOA FROM K_GN_PESSOAUSUARIOS U WHERE U.USUARIO = @USUARIO)
-                                                                   AND (((B.VALORESBAIXADOS IS NULL OR B.VALORESBAIXADOS = 0) AND (B.VALOR > 0)))
-                                                              ORDER BY B.AP");
+                                        ROUND(
+                                        (
+                                        LANCAMENTO_VALOR * (1 + ROUND(((COALESCE(B.ACRESCIMOS,0)+ COALESCE(B.VALORDESAGIO,0) - COALESCE(B.ABATIMENTOS,0)) / B.VALOR),10))
+                                        )
+                                        -
+                                        (
+                                        LANCAMENTO_VALOR * (1-((B.VALOR - ((COALESCE(VALORPAGO,0) - COALESCE(VALORESTORNO,0)))) / B.VALOR))
+                                        )
+                                        ,2) SALDO_COTACAO_EMISSAO,
+                                        ROUND(
+                                        (
+                                        LANCAMENTO_VALOR * (1 + ROUND(((COALESCE(B.ACRESCIMOS,0)+ COALESCE(B.VALORDESAGIO,0) - COALESCE(B.ABATIMENTOS,0)) / B.VALOR),10))
+                                        )
+                                        -
+                                        (
+                                        LANCAMENTO_VALOR * (1-((B.VALOR - ((COALESCE(VALORPAGO,0) - COALESCE(VALORESTORNO,0)))) / B.VALOR))
+                                        )
+                                        ,2) SALDO_COTACAO_ATUALIZADO,
+                                        NULL CLIENTE,
+                                        E.NOME OPERACAO,
+                                        NULL TIPOSAIDA,
+                                        C.ENTRADASAIDA,
+                                        CASE C.TIPODEMOVIMENTO WHEN 1 THEN 'Normal' WHEN 2 THEN 'Adiantamento' WHEN 3 THEN 'Devolução' ELSE 'Outros' END TIPODEMOVIMENTO,
+                                        F.NOME FILIAL,
+                                        D.NOME PESSOA,
+                                        C.DOCUMENTODIGITADO,
+                                        C.DATAENTRADA,
+                                        L.ESTRUTURA CENTROCUSTO_ESTURUTURA,
+                                        L.NOME CENTROCUSTO_NOME,
+                                        M.ESTRUTURA PROJETO_ESTRUTURA,
+                                        M.NOME PROJETO_NOME,
+                                        G.NOME CONTA_FINANCEIRA,
+                                        G.ESTRUTURA CONTA_FINANCEIRAESTRUTURA,
+                                        C.VALORNOMINAL DOC_VALORNOMINAL,
+                                        C.VALORLIQUIDO DOC_VALORLIQUIDO,
+                                        B.AP,
+                                        B.PARCELADIGITADA,
+                                        B.VENCIMENTOORIGINAL VENCIMENTO,
+                                        B.PARCELADIGITADA,
+                                        B.VCTOPRORROGADO VCTOPRORROGADO,
+                                        B.VALOR PARCELA_VALOR
+                                        FROM (
+                                        SELECT A.HANDLE PARCELA,
+                                        F.CONTA,
+                                        FC.CENTROCUSTO,
+                                        FC.PROJETO,
+                                        ((CASE WHEN F.NATUREZA = 'D' THEN -1 ELSE CASE WHEN F.NATUREZA = 'C' THEN 1 ELSE CASE WHEN FN_DOCUMENTOS.ENTRADASAIDA = 'E' THEN -1 ELSE 1 END END END) * (COALESCE(FC.VALOR,F.VALOR, A.VALOR))) LANCAMENTO_VALOR
+                                        FROM FN_PARCELAS A
+                                        INNER JOIN FN_DOCUMENTOS FN_DOCUMENTOS ON (FN_DOCUMENTOS.HANDLE = A.DOCUMENTO)
+                                        INNER JOIN FN_LANCAMENTOS F ON A.HANDLE = F.PARCELA AND F.TIPO IN (3)
+                                        LEFT JOIN FN_LANCAMENTOCC FC ON F.HANDLE = FC.LANCAMENTO
+                                        WHERE A.VALOR > 0
+                                        AND A.PREVISAO = 'N'
+                                        AND EXISTS
+                                        (
+                                        SELECT *
+                                        FROM FN_DOCUMENTOS DOCS
+                                        WHERE DOCS.HANDLE = A.DOCUMENTO
+                                        AND
+                                        (
+                                        (
+                                        (
+                                        (
+                                        DOCS.ENTRADASAIDA IN ('E')
+                                        AND
+                                        (
+                                        DOCS.ABRANGENCIA <> 'R'
+                                        )
+                                        AND DOCS.TIPODEMOVIMENTO IN(1, 2)
+                                        )
+                                        OR
+                                        (
+                                        DOCS.ENTRADASAIDA IN ('S')
+                                        AND DOCS.TIPODEMOVIMENTO = 3
+                                        )
+                                        )
+                                        AND
+                                        (
+                                        (
+                                        DOCS.DATACANCELAMENTO IS NULL
+                                        )
+                                        OR
+                                        (
+                                        DATACONTABILCANCELAMENTO > CONVERT(DATETIME, FLOOR(CONVERT(FLOAT, GETDATE())))
+                                        )
+                                        )
+                                        AND
+                                        (
+                                        (
+                                        A.DATALIQUIDACAO IS NULL
+                                        AND
+                                        (
+                                        A.EMABERTO = 'S'
+                                        )
+                                        )
+                                        )
+                                        )
+                                        OR
+                                        (
+                                        (
+                                        (
+                                        DOCS.ENTRADASAIDA IN ('S')
+                                        AND DOCS.TIPODEMOVIMENTO IN(1, 2)
+                                        )
+                                        OR
+                                        (
+                                        DOCS.ENTRADASAIDA IN ('E')
+                                        AND DOCS.TIPODEMOVIMENTO = 3
+                                        )
+                                        )
+                                        AND
+                                        (
+                                        (
+                                        DOCS.DATACANCELAMENTO IS NULL
+                                        )
+                                        OR
+                                        (
+                                        DOCS.DATACANCELAMENTO > CONVERT(DATETIME, FLOOR(CONVERT(FLOAT, GETDATE())))
+                                        )
+                                        )
+                                        AND
+                                        (
+                                        (
+                                        DOCS.DATACONTABILCANCELAMENTO IS NULL
+                                        )
+                                        OR
+                                        (
+                                        DOCS.DATACONTABILCANCELAMENTO > CONVERT(DATETIME, FLOOR(CONVERT(FLOAT, GETDATE())))
+                                        )
+                                        )
+                                        AND
+                                        (
+                                        A.DATALIQUIDACAO > CONVERT(DATETIME, FLOOR(CONVERT(FLOAT, GETDATE())))
+                                        OR A.DATALIQUIDACAO IS NULL
+                                        )
+                                        AND DOCS.DATAEMISSAO <= CONVERT(DATETIME, FLOOR(CONVERT(FLOAT, GETDATE())))
+                                        )
+                                        )
+                                        )
+                                        ) A
+                                        INNER JOIN FN_PARCELAS B ON A.PARCELA = B.HANDLE
+                                        LEFT JOIN FN_DOCUMENTOS C ON B.DOCUMENTO = C.HANDLE
+                                        LEFT JOIN GN_PESSOAS D ON C.PESSOA = D.HANDLE
+                                        LEFT JOIN GN_OPERACOES E ON C.OPERACAO = E.HANDLE
+                                        LEFT JOIN FILIAIS F ON C.FILIAL = F.HANDLE
+                                        LEFT JOIN FN_CONTAS G ON A.CONTA = G.HANDLE
+                                        LEFT JOIN GN_MOEDAS H ON C.MOEDA = H.HANDLE
+                                        LEFT JOIN GN_PARAMETROS K ON C.EMPRESA = K.EMPRESA
+                                        LEFT JOIN CT_CC L ON A.CENTROCUSTO = L.HANDLE
+                                        LEFT JOIN GN_PROJETOS M ON A.PROJETO = M.HANDLE
+                                        LEFT JOIN
+                                        (
+                                        SELECT FN_MOVIMENTACOES.PARCELA,
+                                        SUM(VALOR) VALORPAGO,
+                                        SUM(VALORESBAIXADOSMOEDA) VALORPAGOMOEDA
+                                        FROM FN_MOVIMENTACOES
+                                        WHERE ((FN_MOVIMENTACOES.TIPOMOVIMENTO IN (1, 2, 5, 8, 14)) OR (FN_MOVIMENTACOES.TIPOMOVIMENTO = 3 AND FN_MOVIMENTACOES.MOVIMENTACAO IS NOT NULL))
+                                        AND FN_MOVIMENTACOES.DATA <= CONVERT(DATETIME, FLOOR(CONVERT(FLOAT, GETDATE())))
+                                        GROUP BY FN_MOVIMENTACOES.PARCELA
+                                        ) BAIXA ON A.PARCELA = BAIXA.PARCELA
+                                        LEFT JOIN
+                                        (
+                                        SELECT A.PARCELA,
+                                        SUM(A.VALOR) VALORESTORNO,
+                                        SUM(A.VALORESBAIXADOSMOEDA) VALORESTORNOMOEDA
+                                        FROM FN_MOVIMENTACOES A
+                                        WHERE A.TIPOMOVIMENTO = 9
+                                        AND A.DATA <= CONVERT(DATETIME, FLOOR(CONVERT(FLOAT, GETDATE())))
+                                        GROUP BY A.PARCELA
+                                        ) ESTORNO ON A.PARCELA = ESTORNO.PARCELA
+                                        WHERE B.VALOR > 0
+                                        ");
+            var registros0 = query0.Execute();
+            foreach (EntityBase registro0 in registros0)
+            {
+                Saldo += Convert.ToDouble(registro0.Fields["PARCELAVALORSALDO"]);
+            }
+            retorno.Saldo= Math.Round(Saldo, 2);
+
+
+
+            Query query1 = new Query(@"SELECT A.HANDLE HANDLEDOCUMENTO,
+                                                            B.HANDLE,
+                                                            A.DATAEMISSAO,
+                                                            B.DATAVENCIMENTO DataVencimento,
+                                                            B.VCTOPRORROGADO DataPagamento,
+                                                            A.DOCUMENTODIGITADO,
+                                                            A.ENTRADASAIDA,
+                                                            B.VALOR - B.VALORESBAIXADOS Valor,
+                                                            O.NOME Operacao,
+                                                            NULL CFOP, --PEGA DE QQ ITEM
+                                                            A.HISTORICO,
+                                                            NULL Observacao
+                                                        FROM FN_DOCUMENTOS A
+                                                            JOIN FN_PARCELAS B ON (B.DOCUMENTO = A.HANDLE)
+                                                            JOIN GN_OPERACOES O ON (O.HANDLE = A.OPERACAO)
+                                                            LEFT OUTER JOIN TR_MODELOSFISCAIS M ON (M.HANDLE = A.MODELO)
+                                                        WHERE
+
+                                                                A.OPERACAO = O.HANDLE
+
+                                                            AND
+
+                                                                A.ENTRADASAIDA IN ('E', 'S') 
+
+                                                            AND
+
+                                                                A.TIPODEMOVIMENTO = 1
+                                                            AND NOT EXISTS
+                                                            (
+                                                                SELECT 1
+                                                                        FROM (SELECT 'R' ID
+                                                                                UNION ALL SELECT 'F' ID
+                                                                                        UNION ALL SELECT 'A' ID
+                                                                                                    UNION ALL SELECT 'B' ID
+                                                                                                                UNION ALL SELECT 'D' ID
+                                                                                                                            UNION ALL SELECT 'G' ID
+                                                                                                                                    UNION ALL SELECT 'H' ID) AB_LIST WHERE (A.ABRANGENCIA = AB_LIST.ID))
+                                                                AND A.EHPREVISAO = 'N'
+                                                                AND A.PESSOA IN (SELECT PESSOA FROM K_GN_PESSOAUSUARIOS U WHERE U.USUARIO = @USUARIO)
+                                                                AND (((B.VALORESBAIXADOS IS NULL OR B.VALORESBAIXADOS = 0) AND (B.VALOR > 0)))
+                                                            ORDER BY B.AP");
 
             // A.ENTRADASAIDA IN ('E', 'S')  tratar como E sinal positivo ou S negativo  (caso seja um unico select).
             // caso sejam select separados um para E outro para S.
 
             //System.NullReferenceException: 'Referência de objeto não definida para uma instância de um objeto.'
             //List<DocModel> retorno = 
-            var registros = query.Execute();
-            foreach (EntityBase registro in registros)
+            var registros1 = query1.Execute();
+            retorno.Itens = new List<FinanceiroItemModel>();
+            foreach (EntityBase registro1 in registros1)
             {
-                retorno.Itens = new List<FinanceiroItemModel>();
+                
                 Query query2 = new Query(@"SELECT A.HANDLE,
                                                    A.QUANTIDADE,
                                                    A.VALORUNITARIO,
@@ -398,7 +599,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                                                    INNER JOIN PD_PRODUTOS C ON A.PRODUTO = C.HANDLE
                                                    INNER JOIN GN_NATUREZASFISCAIS D ON A.CLASSIFICACAOFISCAL = D.HANDLE
                                              WHERE B.DOCUMENTOORIGEM = :HANDLEDOCUMENTO");
-                query2.Parameters.Add(new Parameter("HANDLEDOCUMENTO", Convert.ToInt32(registro.Fields["HANDLEDOCUMENTO"])));
+                query2.Parameters.Add(new Parameter("HANDLEDOCUMENTO", Convert.ToInt32(registro1.Fields["HANDLEDOCUMENTO"])));
                 var registros2 = query2.Execute();
                 List<FinanceiroProdutosModel> _Produtos = new List<FinanceiroProdutosModel>();
                 List<string> _CFOP = new List<string>();
@@ -417,29 +618,28 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                     });
                     _CFOP.Add(Convert.ToString(registro2.Fields["CFOP"]));
 
-
                 }
                 
                 retorno.Itens.Add(new FinanceiroItemModel()
                 {
-                        Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
-                        DataEmissao = Convert.ToDateTime(registro.Fields["DATAEMISSAO"]),
-                        DataVencimento = Convert.ToDateTime(registro.Fields["DataVencimento"]),
-                        DataPagamento = Convert.ToDateTime(registro.Fields["DataPagamento"]),
-                        DocumentoDigitado = Convert.ToString(registro.Fields["DOCUMENTODIGITADO"]),
-                        Valor = Convert.ToInt32(registro.Fields["Valor"]),
+                        Handle = Convert.ToInt32(registro1.Fields["HANDLE"]),
+                        DataEmissao = Convert.ToDateTime(registro1.Fields["DATAEMISSAO"]),
+                        DataVencimento = Convert.ToDateTime(registro1.Fields["DataVencimento"]),
+                        DataPagamento = Convert.ToDateTime(registro1.Fields["DataPagamento"]),
+                        DocumentoDigitado = Convert.ToString(registro1.Fields["DOCUMENTODIGITADO"]),
+                        Valor = Convert.ToInt32(registro1.Fields["Valor"]),
                         CFOP = _CFOP.Count > 0 ? _CFOP[0] : string.Empty,
-                        Operacao = Convert.ToString(registro.Fields["Operacao"]),
-                        Historico = Convert.ToString(registro.Fields["HISTORICO"]),
-                        Observacao = Convert.ToString(registro.Fields["Observacao"]),
-                        //EntradaSaida = Convert.ToString(registro.Fields["ENTRADASAIDA"]),
+                        Operacao = Convert.ToString(registro1.Fields["Operacao"]),
+                        Historico = Convert.ToString(registro1.Fields["HISTORICO"]),
+                        Observacao = Convert.ToString(registro1.Fields["Observacao"]),
+                        EntradaSaida = Convert.ToString(registro1.Fields["ENTRADASAIDA"]),
                         Produtos = _Produtos,
                 });
 
 
                 // Adicionando Produtos ao último item em retorno.Itens
 
-                retorno.Saldo = 1;// depois peguntar se é a mesma coisa que valor mesmo estilo Mega 100 SUM 
+               
 
             }
             return retorno;
@@ -488,6 +688,41 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
 
 
 
+        }
+        public List<NotasFiscalModel> buscarNotasFicais(BuscarNotasFiscalModel request)
+        {
+            List<NotasFiscalModel> retorno = new List<NotasFiscalModel>();
+            
+            //Query query = new Query(@"");
+            //query.Parameters.Add(new Parameter("DATAINICIO", request.DataInicio));
+            //query.Parameters.Add(new Parameter("DATAFIM", request.DataFim));
+            //var registros = query.Execute();
+
+            //foreach (EntityBase registro in registros)
+            //{
+            //    retorno.Add(new NotasFiscalModel()
+            //    {
+            //        Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
+            //        Data = Convert.ToDateTime(registro.Fields["DATA"]),
+            //        Numero = Convert.ToString(registro.Fields["NUMERO"]),
+            //        Nome = Convert.ToString(registro.Fields["NOME"]),
+            //        Valor = Convert.ToDouble(registro.Fields["VALOR"]),
+            //        Descricao = Convert.ToString(registro.Fields["DESCRICAO"]),
+            //    });
+            //}
+
+            retorno.Add(new NotasFiscalModel()
+            {
+                Handle = 1,
+                Data = DateTime.Parse("01/01/2024"),
+                Numero = "102-ABC",
+                Nome = "Nota fiscal A",
+                Valor = 12342,
+                Descricao = "Nota fiscal produto A",
+
+            });
+
+            return retorno;
         }
         public List<CardModel> buscarCard()
         {
@@ -635,12 +870,20 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
             (Sac.Fields["USUARIOENVIO"] as EntityAssociation).Handle = BennerContext.Security.GetLoggedUserHandle();
             Sac.Save();
 
+            NotificacaoSacRequest requestemail = new NotificacaoSacRequest();
+            Query query = new Query(@"SELECT DESTINATARIO
+                                          FROM K_GN_EMAILDESTINATARIOS
+                                         WHERE ATIVO = 'S' ");
+            var registros = query.Execute();
+
+            foreach (EntityBase registro in registros)
+            {
+                requestemail.Add(Convert.ToString(registro.Fields["DESTINATARIO"]), $"Nova mensagem Ouvidoria: {request.Titulo}", request.Mensagem);
+            }
             try
             {
-                NotificacaoSacRequest requestemail = new NotificacaoSacRequest("ath.silva.antunes@gmail.com", request.Titulo, request.Mensagem);
-                
                 BusinessTask.Factory.NewComponentTask<INotificacaoSac>()
-                        .WithDescription("Notificação de aprovação")
+                        .WithDescription("Notificação de Sac")
                         .WithNotification()
                         .WithRequestValue(requestemail)
                         .Start();

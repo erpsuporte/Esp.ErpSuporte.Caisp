@@ -1,11 +1,13 @@
 ﻿using Benner.Tecnologia.Business;
 using Benner.Tecnologia.Common;
+using Benner.Tecnologia.Common.EnterpriseServiceLibrary;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 
@@ -23,21 +25,9 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
     {
 
 
-        private void AtribuiSomenteLeitura()
-        {
-            base.Visualization.Fields["PRIVACIDADE"].ReadOnly = true;
-            base.Visualization.Fields["PESSOASAUTORIZADAS"].ReadOnly = true;
-            base.Visualization.Fields["PESSOASAUTORIZADAS"].Visible = false;
-        }
         
-        protected override void Edited()
-        {
-            this.Editado = true;
-            this.Save();
-            base.Edited();
-            AtribuiSomenteLeitura();
-
-        }
+        
+        
         protected override void Saving()
         {
             string doc = this.ArquivoPdf.ToString();
@@ -49,26 +39,42 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
             base.Saving();
         }
         protected override void Saved()
-        {   
-            if (this.Editado == false && this.PrivacidadeDoDocumento != 1)
+        {
+            if (this.PrivacidadeDoDocumento == 2)
             {
+                var handlesList = (this.Fields["PESSOASAUTORIZADAS"] as EntityAggregation).ToHandleList();
+                Handle[] handlesArray = handlesList.ToArray();
+                string handlesString = string.Join(",", handlesArray.Select(h => h.ToString()));
 
-                //List<Handle> handleList = (this.Fields["CAMPOFILTRO"] as EntityAggregation).ToHandleList();
-                //Handle[] handleArray = (this.Fields["CAMPOFILTRO"] as EntityAggregation).ToHandleList().ToArray();
-                foreach (Handle handle in (this.Fields["PESSOASAUTORIZADAS"] as EntityAggregation).ToHandleList())
+                Query query = new Query($@"SELECT * FROM GN_PESSOAS A WHERE HANDLE IN ({handlesString}) AND NOT EXISTS (SELECT *  FROM K_GN_DOCUMENTOPESSOAS B WHERE A.HANDLE =B.PESSOA AND  DOCUMENTO = :HANDLE)");
+                query.Parameters.Add(new Parameter("HANDLE", this.Handle));
+
+                var registros = query.Execute();
+
+                if (registros != null)
                 {
-                    EntityBase documentopessoas = Entity.Create(EntityDefinition.GetByName("K_GN_DOCUMENTOPESSOAS"));
-                    documentopessoas.Fields["PESSOA"] = new EntityAssociation(handle, EntityDefinition.GetByName("GN_PESSOAS"));
-                    documentopessoas.Fields["DOCUMENTO"] = new EntityAssociation(base.Handle, this.Definition);
-                    documentopessoas.Save();
+                    foreach (EntityBase registro in registros)
+                    {
+                        EntityBase documentopessoas = Entity.Create(EntityDefinition.GetByName("K_GN_DOCUMENTOPESSOAS"));
+                        documentopessoas.Fields["PESSOA"] = new EntityAssociation(Convert.ToInt32(registro.Fields["HANDLE"]), EntityDefinition.GetByName("GN_PESSOAS"));
+                        documentopessoas.Fields["DOCUMENTO"] = new EntityAssociation(base.Handle, this.Definition);
+                        documentopessoas.Save();
+                    }
                 }
 
+                Query query2 = new Query($@"DELETE K_GN_DOCUMENTOPESSOAS WHERE DOCUMENTO = :HANDLE AND PESSOA NOT IN ({handlesString})");
+                query2.Parameters.Add(new Parameter("HANDLE", this.Handle));
+                query2.Execute();
+            }
+            else
+            {
+                Query query2 = new Query($@"DELETE K_GN_DOCUMENTOPESSOAS WHERE DOCUMENTO = :HANDLE ");
+                query2.Parameters.Add(new Parameter("HANDLE", this.Handle));
+                query2.Execute();
                 
-
             }
 
-
-            base.Saved();
+                base.Saved();
         }
     }
 
