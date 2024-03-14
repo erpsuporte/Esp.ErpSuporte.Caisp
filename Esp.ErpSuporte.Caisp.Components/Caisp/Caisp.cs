@@ -772,11 +772,11 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                 
                 retorno.Add(new CardModel()
                 {
-                    Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
-                    Nome = Convert.ToString(registro.Fields["NOME"]),
-                    Color = ColorField.OleColorToHtmlHex(corInt),
-                    ConsultaSQL = Convert.ToString(registro.Fields["CONSULTASQL"]),
-                    Screen = Convert.ToString((registro.Fields["TELA"]as ListItem).Text),
+                    Handle = registro.Fields["HANDLE"] != null ? Convert.ToInt32(registro.Fields["HANDLE"]) : 0,
+                    Nome = registro.Fields["NOME"] != null ? Convert.ToString(registro.Fields["NOME"]) : "",
+                    Color = ColorField.OleColorToHtmlHex(corInt) ,
+                    ConsultaSQL = registro.Fields["CONSULTASQL"] != null ? Convert.ToString(registro.Fields["CONSULTASQL"]) : "",
+                    Screen = (registro.Fields["TELA"] as ListItem)?.Text?.ToString() ?? "", //registro.Fields["TELA"] != null ? Convert.ToString((registro.Fields["TELA"] as ListItem).Value) : "", 
                     Valor = Valor
                 });
             }
