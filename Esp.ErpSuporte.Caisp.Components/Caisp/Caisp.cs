@@ -751,15 +751,17 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
 
             //});
 
-            Query query = new Query(@"SELECT * FROM K_GN_CARDS
-                                        WHERE ATIVO = 'S' ");
-            var registros = query.Execute();
+            //Query query = new Query(@"SELECT * FROM K_GN_CARDS
+                                        //WHERE ATIVO = 'S' ");
+            //var registros = query.Execute();
             var Valor = "";
+            List<EntityBase> registros = Entity.GetMany(EntityDefinition.GetByName("K_GN_CARDS"), new Criteria("ATIVO = 'S'"));
+            //< List> EntityBase = Entity.GetMany(EntityDefinition.GetByName("K_GN_CARDS", new Criteria("ATIVO = 'S'"));
 
             foreach (EntityBase registro in registros)
             {
-
-                int corInt = Convert.ToInt32(registro.Fields["COR"]);
+                
+                //int corInt = Convert.ToInt32(((ColorField)registro.Fields["COR"]).Value);
                 Query query2 = new Query(Convert.ToString(registro.Fields["CONSULTASQL"]));
                 var registros2 = query2.Execute();
                 
@@ -774,11 +776,10 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                 {
                     Handle = registro.Fields["HANDLE"] != null ? Convert.ToInt32(registro.Fields["HANDLE"]) : 0,
                     Nome = registro.Fields["NOME"] != null ? Convert.ToString(registro.Fields["NOME"]) : "",
-                    Color = ColorField.OleColorToHtmlHex(corInt) ,
-                    ConsultaSQL = registro.Fields["CONSULTASQL"] != null ? Convert.ToString(registro.Fields["CONSULTASQL"]) : "",
-                    Screen = (registro.Fields["TELA"] as ListItem)?.Text?.ToString() ?? "", //registro.Fields["TELA"] != null ? Convert.ToString((registro.Fields["TELA"] as ListItem).Value) : "", 
+                    Color = ColorField.OleColorToHtmlHex(Convert.ToInt32(((ColorField)registro.Fields["COR"]).Value)), //(((ColorField)registro.Fields["COR"]).Color.R).ToString("X2") + (((ColorField)registro.Fields["COR"]).Color.G).ToString("X2") + (((ColorField)registro.Fields["COR"]).Color.B).ToString("X2"),
+                    Screen = registro.Fields["TELA"]!= null ? (registro.Fields["TELA"]as ListItem).ToString() : "", //(registro.Fields["TELA"] as ListItem)?.Text?.ToString() ?? "", 
                     Valor = Valor
-                });
+                });;
             }
             return retorno;
         }
