@@ -1,4 +1,5 @@
-﻿using Benner.Tecnologia.Common.Components;
+﻿using Benner.Tecnologia.Common;
+using Benner.Tecnologia.Common.Components;
 using System;
 using System.Collections.Generic;
 
@@ -234,6 +235,11 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
         public string Condicao { get; set; }
         public string Tabela { get; set; }
         public string Campo {  get; set; }
+    }
+    public class ResponseDocumento
+    {
+        public EntityBase Tabela { get; set; }
+        
     }
 
 

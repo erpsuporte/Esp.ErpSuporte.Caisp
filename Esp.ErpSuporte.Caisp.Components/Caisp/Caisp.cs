@@ -32,9 +32,9 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
             return reportEmitter.GetEmittedReportHandle();
         }
 
-        public int BuscarDocumento(RequestDocumento request)
+        public ResponseDocumento BuscarDocumento(RequestDocumento request)
         {
-            var retorno = 0;
+            ResponseDocumento retorno = new ResponseDocumento();
 
             try
             {
@@ -64,14 +64,15 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                         emitToTemporaryTable,
                         new TransitoryData());
 
-                    //var processid = EmitReport_(new Handle(2338), "PDF", Criteria.Empty, true, true, null, true, new TransitoryData()); //Ok
+                   
+                    retorno.Tabela = Entity.Get(EntityDefinition.GetByName("Z_ARQUIVOSTEMPORARIOS"), new Criteria("A.HANDLE = :HANDLE", new Parameter("HANDLE", (int)(processid.Value)))); 
+                    
+                    
 
-                    retorno = (int)(processid.Value);
-                    //BennerContext.Report.EmitReport(codigoRelatorio, "PDF", criteria, true, true, null, true, new TransitoryData());
-                    //var handleArquivoTempP1073 = BennerContext.Report.EmitReport(codigoRelatorio, "PDF", Criteria.Empty, true, true, filtroRelatorioP1073, true, new TransitoryData());
-
-                    //int x = 1;
-
+                }
+                if (request.Proceso == 2)
+                {
+                    retorno.Tabela= Entity.Get(EntityDefinition.GetByName(request.Tabela), new Criteria("A.HANDLE = :HANDLE", new Parameter("HANDLE", request.HandleOrigem)));
                 }
             }
             catch (Exception erro)
@@ -172,7 +173,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
 
             foreach (EntityBase registro in registros)
             {
-                string url = "https://erpsuporte.com.br/NEW_CORP_CAISP_DEV_20200328/Pages/Public/BaixarRelatorio.ashx";
+                string url = "https://erpsuporte.com.br/NEW_CORP_CAISP_DEV_20200328/Pages/Public/Arquivo.ashx?Processo=2&Tipo=PDF&Campo=ARQUIVOPDF&Tabela=K_GN_DOCUMENTOS";
                 //Gerar um link com dois parâmetros
                 var urlLinkDefinition = new UrlLinkDefinition(url);
                 

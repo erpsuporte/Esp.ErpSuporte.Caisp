@@ -9,7 +9,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Interfaces.Caisp
 {
     public interface ICaisp
     {
-        int BuscarDocumento(RequestDocumento request);
+        ResponseDocumento BuscarDocumento(RequestDocumento request);
 
 
         List<ContatosModel> buscarContatos(); //-TABELA -UI -API Funcionando - TESTE (ok)
