@@ -36,8 +36,10 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
                 throw new BusinessException("Documento fora do formato .pdf");
             }
 
+
             base.Saving();
         }
+
         protected override void Saved()
         {
             if (this.PrivacidadeDoDocumento == 2)
@@ -72,9 +74,10 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
                 query2.Parameters.Add(new Parameter("HANDLE", this.Handle));
                 query2.Execute();
                 
+
             }
 
-                base.Saved();
+            base.Saved();
         }
     }
 

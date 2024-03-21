@@ -1,4 +1,5 @@
-﻿using Benner.Tecnologia.Common.IoC;
+﻿using Benner.Tecnologia.Common;
+using Benner.Tecnologia.Common.IoC;
 using Esp.ErpSuporte.Caisp.Business.Interfaces.Caisp;
 using Esp.ErpSuporte.Caisp.Business.Modelos.Caisp;
 using Ninject;
@@ -22,7 +23,7 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         // ok deu certo
         //[Inject]
         //public ICaisp componente { get; set; }
-
+        //
         // ok deu certo
         //ICaisp componente = BusinessComponent.CreateProxyInstance<ICaisp>();
 
@@ -38,6 +39,8 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
             
             try
             {
+                
+
                 List<ContatosModel> retorno = componente.buscarContatos();
                 return Ok(retorno);
             }
@@ -77,13 +80,13 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         /// <returns></returns>
         [HttpGet]
         [Route("buscarEntregasDia")]
-        public IHttpActionResult buscarEntregasDia()//([FromUri] EntregasDiaBuscarModel request)
+        public IHttpActionResult buscarEntregasDia([FromUri] EntregasDiaBuscarModel request)
         {
 
             
             try
             {
-                List<EntregasDiaModel> retorno = componente.buscarEntregasDia();
+                List<EntregasDiaModel> retorno = componente.buscarEntregasDia(request);
                 return Ok(retorno);
             }
             catch (Exception ex)
@@ -165,7 +168,7 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         /// <returns></returns>
         [HttpGet]
         [Route("buscarNotasFiscais")]
-        public IHttpActionResult buscarNotasFicais(BuscarNotasFiscalModel request)//
+        public IHttpActionResult buscarNotasFicais([FromUri] BuscarNotasFiscalModel request)//
         {
 
             

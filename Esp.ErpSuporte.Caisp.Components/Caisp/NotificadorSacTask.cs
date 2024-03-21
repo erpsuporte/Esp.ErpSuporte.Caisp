@@ -33,8 +33,8 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
             var usuario = 0;
             foreach (EntityBase registro in registros)
             {
-                 Destinatarios = Convert.ToString(registro.Fields["K_DESTINATARIOS"]);
-                 usuario = Convert.ToInt32(registro.Fields["K_USUARIOEMAIL"]);
+                Destinatarios = Convert.ToString(registro.Fields["K_DESTINATARIOS"]);
+                usuario = Convert.ToInt32(registro.Fields["K_USUARIOEMAIL"]);
             }
             //var usuario = ZAgendamentos.Get(new Criteria("A.TIPO = 6")).Usuario.Instance; //engine de emails 6
             var msg = _mailService.NewMailMessage();

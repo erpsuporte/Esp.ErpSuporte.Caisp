@@ -48,7 +48,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
         public string Produto { get; set; }
         public string Variacao { get; set; }
         public int QuantidadeRecebida { get; set; }
-        public string Link { get; set; }
+        
     }
 
     public class EntregasPeriodoBuscaModel
@@ -89,7 +89,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
         public DateTime DataVencimento { get; set; }
         public DateTime DataPagamento { get; set; }
         public string DocumentoDigitado { get; set; }
-        public int Valor { get; set; }
+        public Double Valor { get; set; }
         public string Operacao { get; set; }
         public string CFOP { get; set; }
         public string Historico { get; set; }
@@ -107,11 +107,29 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
     public class NotasFiscalModel
     {
         public int Handle { get; set; }
-        public DateTime Data { get; set; }
-        public string Numero { get; set; }
+        public DateTime DataEmissao { get; set; }
+        public List<NotaFiscalParcelasModel> Parcelas { get; set; }
+        public string DocumentoDigitado { get; set; }
         public double Valor { get; set; }
-        public string Nome { get; set; }
-        public string Descricao { get; set; }
+        public string Operacao { get; set; }
+        public string CFOP { get; set; }
+        public string Historico { get; set; }
+        public string Observacao { get; set; }
+        public string EntradaSaida { get; set; }
+        public List<NotasFiscalProdutosModel> Produtos { get; set; }
+        
+
+
+    }
+
+    public class NotaFiscalParcelasModel
+    {
+        public int Handle { get; set; }
+        public DateTime DataVencimento { get; set; }
+        public string DataBaixa { get; set; }
+        public Double Valor { get; set; }
+        public Double ValorBaixado { get; set; }
+
     }
     public class FinanceiroProdutosModel
     {
@@ -119,6 +137,14 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
         public int Quantidade { get; set; }
         public int ValorUnitario { get; set; }
         public int Total { get; set; }
+        public string Nome { get; set; }
+    }
+    public class NotasFiscalProdutosModel
+    {
+        public int Handle { get; set; }
+        public int Quantidade { get; set; }
+        public double ValorUnitario { get; set; }
+        public double Total { get; set; }
         public string Nome { get; set; }
     }
 
@@ -154,6 +180,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
         public string statusCode { get; set; }
         public string access_token { get; set; }
         public string message { get; set; }
+
     }
 
     public class UserInfoModel
@@ -162,6 +189,10 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
         public string Nome { get; set; }//Z_GRUPOUSUARIO
         public DateTime DataInicioCooperado { get; set; }//Z_GRUPOUSUARIO DD?MM/YYYY
         public int CapitalSocial { get; set; } //EMPRESAS
+        public int RelatorioEntregaDia { get; set; }
+        public int RelatorioEntregaPeriodo { get; set; }
+
+        public int RelatorioEntregaProgramacao { get; set; }
     }
 
     public class ProgramacaoModel
@@ -194,4 +225,16 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
         public int status { get; set; }
         public string descricao { get; set; }
     }
+
+    public class RequestDocumento
+    {
+        public Int32 Proceso { get; set; } //1 - Relatório, 2-Bdoc
+        public Int32 HandleOrigem { get; set; }
+        public string Format { get; set; }
+        public string Condicao { get; set; }
+        public string Tabela { get; set; }
+        public string Campo {  get; set; }
+    }
+
+
 }

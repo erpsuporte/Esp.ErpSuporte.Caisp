@@ -4,6 +4,7 @@ using Benner.Tecnologia.Common;
 using Benner.Tecnologia.Common.Components;
 using Benner.Tecnologia.Common.EnterpriseServiceLibrary;
 using Benner.Tecnologia.Common.Services;
+using Benner.Tecnologia.Metadata.Entities;
 using Benner.Tecnologia.Metadata.TransformData;
 using Esp.ErpSuporte.Caisp.Business.Interfaces.Caisp;
 using Esp.ErpSuporte.Caisp.Business.Modelos.Caisp;
@@ -13,12 +14,74 @@ using System.Collections.Generic;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices.ComTypes;
 using System.Security.Policy;
+using Benner.Tecnologia.Application.Services.ReportService;
 using static System.Net.WebRequestMethods;
 
 namespace Esp.ErpSuporte.Caisp.Components.Caisp
 {
     public class CaispComponente : BusinessComponent<CaispComponente>, ICaisp
     {
+        public Handle EmitReport_(Handle reportHandle, string format, Criteria criteria, bool defaultFilter, bool companyFilter, EntityBase filterEntity, bool emitToTemporaryTable, TransitoryData transitoryData)
+        {
+            var report = RRelatorios.Get(reportHandle);
+
+            var reportEmitter = ReportEmitterFactory.CreateEmitter(report);
+            reportEmitter.Render(filterEntity, format, criteria, defaultFilter, companyFilter, false, true, transitoryData);
+            reportEmitter.Emit(emitToTemporaryTable);
+
+            return reportEmitter.GetEmittedReportHandle();
+        }
+
+        public int BuscarDocumento(RequestDocumento request)
+        {
+            var retorno = 0;
+
+            try
+            {
+                if (request.Proceso == 1)
+                {
+                    Int32 handleReport;
+                    string format;
+                    Criteria criteria = null;
+                    bool defaultFilter = true;
+                    bool companyFilter = true;
+                    bool emitToTemporaryTable = true;
+
+                    handleReport = request.HandleOrigem;
+                    format = request.Format;
+                    if (request.Condicao != "")
+                    {
+                        criteria = new Criteria(request.Condicao);
+                    }
+
+                    var processid = EmitReport_(
+                        new Handle(handleReport),
+                        format,
+                        criteria,
+                        defaultFilter,
+                        companyFilter,
+                        null,
+                        emitToTemporaryTable,
+                        new TransitoryData());
+
+                    //var processid = EmitReport_(new Handle(2338), "PDF", Criteria.Empty, true, true, null, true, new TransitoryData()); //Ok
+
+                    retorno = (int)(processid.Value);
+                    //BennerContext.Report.EmitReport(codigoRelatorio, "PDF", criteria, true, true, null, true, new TransitoryData());
+                    //var handleArquivoTempP1073 = BennerContext.Report.EmitReport(codigoRelatorio, "PDF", Criteria.Empty, true, true, filtroRelatorioP1073, true, new TransitoryData());
+
+                    //int x = 1;
+
+                }
+            }
+            catch (Exception erro)
+            {
+                throw erro;
+            }
+            return retorno;
+        }
+
+
         public object Destinatarios { get; private set; }
 
         public List<ContatosModel> buscarContatos()
@@ -47,11 +110,11 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                 {
                     Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
                     Nome = Convert.ToString(registro.Fields["NOME"]),
-                    Descricao = Convert.ToString(registro.Fields["DESCRICAO"]),
+                    Descricao = registro.Fields["DESCRICAO"] != null ? Convert.ToString(registro.Fields["DESCRICAO"]) : "",
                     Cargo = Convert.ToString(registro.Fields["CARGO"]),
                     Telefone = Convert.ToString(registro.Fields["TELEFONE"]),
-                    Ramal = Convert.ToString(registro.Fields["RAMAL"]),
-                    Whatsapp = Convert.ToString(registro.Fields["WHATSAPP"]),// adicionar os outros campos
+                    Ramal = registro.Fields["RAMAL"] != null ? Convert.ToString(registro.Fields["RAMAL"]) : "",
+                    Whatsapp = Convert.ToString(registro.Fields["WHATSAPP"])
                 });
             }
 
@@ -82,13 +145,23 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
 
 
 
-            Query query = new Query(@"SELECT C.HANDLE, C.DATA, C.NUMERO, C.NOME, C.DESCRICAO
-                                        FROM K_GN_DOCUMENTOS C
-                                        LEFT JOIN K_GN_DOCUMENTOPESSOAS B ON C.HANDLE = B.DOCUMENTO
-                                        LEFT JOIN K_GN_PESSOAUSUARIOS A ON B.PESSOA = A.PESSOA
-                                        WHERE (@USUARIO = A.USUARIO OR A.USUARIO IS NULL)
-                                        AND C.TIPO = :TIPO
-                                        ");
+            Query query = new Query(@"SELECT DISTINCT C.HANDLE,
+                                               C.DATA,
+                                               C.NUMERO,
+                                               C.NOME,
+                                               C.DESCRICAO
+                                          FROM K_GN_DOCUMENTOS C
+                                               LEFT JOIN K_GN_DOCUMENTOPESSOAS B ON C.HANDLE = B.DOCUMENTO
+                                               LEFT JOIN K_GN_PESSOAUSUARIOS A ON B.PESSOA = A.PESSOA
+                                         WHERE
+                                               (
+                                                   (
+                                                       @USUARIO = A.USUARIO
+                                                       AND B.DOCUMENTO IS NOT NULL
+                                                   )
+                                                   OR B.DOCUMENTO IS NULL
+                                               )
+                                               AND C.TIPO = :TIPO;");
             
             query.Parameters.Add(new Parameter("TIPO", request.Tipo));
             //List<EntityBase> registros = Entity.GetMany(EntityDefinition.GetByName("K_GN_DOCUMENTOS"), new Criteria()); ;
@@ -99,7 +172,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
 
             foreach (EntityBase registro in registros)
             {
-                string url = "https://erpsuporte.com.br/CORP_CAISP_DEV_20230328/Pages/Public/BaixarRelatorio.ashx";
+                string url = "https://erpsuporte.com.br/NEW_CORP_CAISP_DEV_20200328/Pages/Public/BaixarRelatorio.ashx";
                 //Gerar um link com dois parâmetros
                 var urlLinkDefinition = new UrlLinkDefinition(url);
                 
@@ -113,7 +186,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                     Data = Convert.ToDateTime(registro.Fields["DATA"]),
                     Numero = Convert.ToString(registro.Fields["NUMERO"]),
                     Nome = Convert.ToString(registro.Fields["NOME"]),
-                    Descricao = Convert.ToString(registro.Fields["DESCRICAO"]),
+                    Descricao = registro.Fields["DESCRICAO"] != null ? Convert.ToString(registro.Fields["DESCRICAO"]) : "",
                     UrlPDF = urlLinkDefinition.GetEncodedUrl()
                 }); ;
             }
@@ -121,7 +194,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
 
 
         }
-        public List<EntregasDiaModel> buscarEntregasDia()//(EntregasDiaBuscarModel request)
+        public List<EntregasDiaModel> buscarEntregasDia(EntregasDiaBuscarModel request)
         {
             List<EntregasDiaModel> retorno = new List<EntregasDiaModel>();
             //retorno.Add(new EntregasDiaModel()
@@ -158,9 +231,9 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                                                 FROM CP_RECEBIMENTOFISICOPAI A
                                                 INNER JOIN GN_PESSOAS B ON A.FORNECEDOR = B.HANDLE
                                                 WHERE A.FORNECEDOR IN (SELECT PESSOA FROM K_GN_PESSOAUSUARIOS U WHERE U.USUARIO = @USUARIO) 
-                                                   AND CONVERT(DATE, A.DATAENTRADA, 103) = CONVERT(DATE, @NOW, 103)");
+                                                   AND CONVERT(DATE, A.DATAENTRADA, 103) = CONVERT(DATE, :DATA, 103)");
             
-            //query.Parameters.Add(new Parameter("DATA", request.Data)); //System.NullReferenceException: 'Referência de objeto não definida para uma instância de um objeto.'
+            query.Parameters.Add(new Parameter("DATA", request.Data)); //System.NullReferenceException: 'Referência de objeto não definida para uma instância de um objeto.'
             //List<DocModel> retorno = 
 
             var registros = query.Execute();//como converter
@@ -179,7 +252,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                 query2.Parameters.Add(new Parameter("RECEBIMENTOFISICOPAI", Convert.ToInt32(registro.Fields["HANDLE"])));
 
                 List<EntregasItensModel> _itens = new List<EntregasItensModel>();
-
+                //
                 var registros2 = query2.Execute();
                 foreach (EntityBase registro2 in registros2)
                 {
@@ -192,14 +265,14 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
 
                     });
                 }
-
+                byte[] bytes = (byte[])registro.Fields["K_ASSINATURA"];
                 retorno.Add(new EntregasDiaModel()
                 {
                     Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
                     DataEntrega = Convert.ToDateTime(registro.Fields["DATAENTRADA"]),
                     Numero = Convert.ToInt32(registro.Fields["NUMERONOTAFISCAL"]),
-                    Conferente = Convert.ToString(registro.Fields["K_CONFERENTE"]),
-                    Assinatura = Convert.ToBase64String((byte[])registro.Fields["K_ASSINATURA"]),
+                    Conferente = registro.Fields["K_CONFERENTE"] != null ? Convert.ToString(registro.Fields["K_CONFERENTE"]) : null,
+                    Assinatura = registro.Fields["K_ASSINATURA"] != null ? Convert.ToBase64String(bytes, 4, bytes.Length - 4) : null,
                     Itens = _itens
                 });
             }
@@ -242,25 +315,9 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
             var registros = query.Execute();
             
 
-            string url = "http://localhost/CORP_CAISP_DEV_20230328/Pages/Public/RelatorioItens.ashx";
-            //Gerar um link com dois parâmetros
-            var urlLinkDefinition = new UrlLinkDefinition(url);
-            //Handle 
-
-            urlLinkDefinition.Parameters.Add("HandleRelatorio", "2338");
-            //urlLinkDefinition.Parameters.Add("Criteria", $"AND CONVERT(DATE, A.DATAENTRADA, 103) BETWEEN CONVERT(DATE, {request.DataInicio}, 103) AND CONVERT(DATE, {request.DataFim}, 103)");
-
-            //Handle handle = 2338;
-            //Criteria criteria = new Criteria("AND CONVERT(DATE, A.DATAENTRADA, 103) BETWEEN CONVERT(DATE, :DATAINICIO, 103) AND CONVERT(DATE, :DATAFIM, 103)");
-            //criteria.Parameters.Add("DATAINICIO", request.DataInicio);
-            //criteria.Parameters.Add("DATAFIM", request.DataFim);
             
-            //ReportPrinter reportPrinter = new ReportPrinter(2338);
-            //reportPrinter.SqlWhere = $"AND CONVERT(DATE, A.DATAENTRADA, 103) BETWEEN CONVERT(DATE, {request.DataInicio}, 103) AND CONVERT(DATE, {request.DataFim}, 103)";
-            //reportPrinter.Preview();
-            //reportPrinter.ExportToFile("teste.pdf");//ExportToFile(@"C:\Users\Arthur\AppData\Local\Temp\2\teste.pdf");
 
-
+            
             foreach (EntityBase registro in registros)
             {
                 Query query2 = new Query(@"SELECT A.HANDLE,
@@ -283,7 +340,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                         CodigoReferencia = Convert.ToString(registro2.Fields["CODIGOREFERENCIA"]),
                         Produto = Convert.ToString(registro2.Fields["NOME"]),
                         QuantidadeRecebida = Convert.ToInt32(registro2.Fields["QTDEENTREGA"]),
-                        Link= urlLinkDefinition.GetEncodedUrl()
+                        
 
                     });
                 }
@@ -327,7 +384,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                 retorno.Add(new Eventos()
                 {
                     Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
-                    Descricao = Convert.ToString(registro.Fields["DESCRICAO"]),
+                    Descricao = registro.Fields["DESCRICAO"] != null ? Convert.ToString(registro.Fields["DESCRICAO"]) : "",
                     Data = Convert.ToDateTime(registro.Fields["DATA"]),
                     Link = Convert.ToString(registro.Fields["LINK"]),
                     Nome = Convert.ToString(registro.Fields["NOME"]),
@@ -629,7 +686,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                         DataVencimento = Convert.ToDateTime(registro1.Fields["DataVencimento"]),
                         DataPagamento = Convert.ToDateTime(registro1.Fields["DataPagamento"]),
                         DocumentoDigitado = Convert.ToString(registro1.Fields["DOCUMENTODIGITADO"]),
-                        Valor = Convert.ToInt32(registro1.Fields["Valor"]),
+                        Valor = Convert.ToDouble(registro1.Fields["Valor"]),
                         CFOP = _CFOP.Count > 0 ? _CFOP[0] : string.Empty,
                         Operacao = Convert.ToString(registro1.Fields["Operacao"]),
                         Historico = Convert.ToString(registro1.Fields["HISTORICO"]),
@@ -695,34 +752,102 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
         {
             List<NotasFiscalModel> retorno = new List<NotasFiscalModel>();
             
-            //Query query = new Query(@"");
-            //query.Parameters.Add(new Parameter("DATAINICIO", request.DataInicio));
-            //query.Parameters.Add(new Parameter("DATAFIM", request.DataFim));
-            //var registros = query.Execute();
+            Query query = new Query(@"SELECT DISTINCT A.HANDLE,
+                                           A.DATAEMISSAO,
+                                           A.DOCUMENTODIGITADO,
+                                           A.VALORNOMINAL,
+                                           A.HISTORICO,
+                                           CASE WHEN A.ENTRADASAIDA IN ('E','I') THEN 'E' ELSE 'S' END ENTRADASAIDA,
+                                           B.NOME OPERACAO,
+                                           NULL OBSERVACOES,
+                                           A.ABRANGENCIA
+                                           --CFOP VEM QDE QQ ITEM, PREENCHE DEPOIS QUANDO FOR BUSCAR OS ITENS
+                                      FROM FN_DOCUMENTOS A
+                                           INNER JOIN GN_OPERACOES B ON A.OPERACAO = B.HANDLE
+                                           INNER JOIN CM_OPERACOESFATURAMENTO C ON A.OPERACAOFATURAMENTO = C.HANDLE AND C.ATUALIZAFINANCEIRO = 'S'
+                                     WHERE A.ABRANGENCIA IN ('R','A')
+                                           AND A.STATUS = 2
+                                           AND EXISTS (SELECT PESSOA FROM K_GN_PESSOAUSUARIOS U WHERE U.USUARIO = @USUARIO AND U.PESSOA =A.PESSOA)
+                                           AND A.DATAEMISSAO BETWEEN CONVERT(DATE, :DATAINICIO, 103) AND CONVERT(DATE, :DATAFIM, 103);");
 
-            //foreach (EntityBase registro in registros)
-            //{
-            //    retorno.Add(new NotasFiscalModel()
-            //    {
-            //        Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
-            //        Data = Convert.ToDateTime(registro.Fields["DATA"]),
-            //        Numero = Convert.ToString(registro.Fields["NUMERO"]),
-            //        Nome = Convert.ToString(registro.Fields["NOME"]),
-            //        Valor = Convert.ToDouble(registro.Fields["VALOR"]),
-            //        Descricao = Convert.ToString(registro.Fields["DESCRICAO"]),
-            //    });
-            //}
-
-            retorno.Add(new NotasFiscalModel()
+            query.Parameters.Add(new Parameter("DATAINICIO", request.DataInicio));
+            query.Parameters.Add(new Parameter("DATAFIM", request.DataFim));
+            var registros = query.Execute();
+            
+            foreach (EntityBase registro in registros)
             {
-                Handle = 1,
-                Data = DateTime.Parse("01/01/2024"),
-                Numero = "102-ABC",
-                Nome = "Nota fiscal A",
-                Valor = 12342,
-                Descricao = "Nota fiscal produto A",
+                var _CFOP = "";
+                List<NotaFiscalParcelasModel> parcelas = new List<NotaFiscalParcelasModel>();
+                List<NotasFiscalProdutosModel> produtos = new List<NotasFiscalProdutosModel>();
+                Query query2 = new Query(@"SELECT DISTINCT A.HANDLE,
+                                               VCTOPRORROGADO,
+                                               A.VALOR,
+                                               A.VALORESBAIXADOS,
+                                               A.DATALIQUIDACAO
+                                          FROM FN_PARCELAS A
+                                               INNER JOIN FN_DOCUMENTOS B ON A.DOCUMENTO = B.DOCUMENTOORIGEM
+                                         WHERE B.HANDLE = :HANDLE   ");
+                query2.Parameters.Add(new Parameter("HANDLE", Convert.ToInt32(registro.Fields["HANDLE"])));
+                var resgitros2 = query2.Execute();
+                foreach(EntityBase registro2 in resgitros2)
+                {
 
-            });
+                    parcelas.Add(new NotaFiscalParcelasModel()
+                    {
+                        Handle = Convert.ToInt32(registro2.Fields["HANDLE"]),
+                        DataVencimento = Convert.ToDateTime(registro2.Fields["VCTOPRORROGADO"]),
+                        DataBaixa = Convert.ToString(registro2.Fields["DATALIQUIDACAO"]),//Convert.ToString(registro2.Fields["DATALIQUIDACAO"]),
+                        Valor = Convert.ToDouble(registro2.Fields["VALOR"]),
+                        ValorBaixado = Convert.ToDouble(registro2.Fields["VALORESBAIXADOS"])
+                    }); ;
+                    
+
+                }
+                Query query3 = new Query(@"SELECT DISTINCT C.HANDLE,
+                                               C.ESTRUTURA CFOP,
+                                               B.NOME PRODUTO,
+                                               A.QUANTIDADE,
+                                               A.VALORUNITARIO,
+                                               A.VALORTOTAL
+                                          FROM CM_ITENS A
+                                               INNER JOIN PD_PRODUTOS B ON A.PRODUTO = B.HANDLE
+                                               INNER JOIN GN_NATUREZASFISCAIS C ON A.CLASSIFICACAOFISCAL = C.HANDLE
+                                             WHERE A.DOCUMENTO = :HANDLE");
+                query3.Parameters.Add(new Parameter("HANDLE", Convert.ToInt32(registro.Fields["HANDLE"])));
+                var resgitros3 = query3.Execute();
+                foreach (EntityBase registro3 in resgitros3)
+                {
+                    produtos.Add(new NotasFiscalProdutosModel()
+                    {
+                        Handle = Convert.ToInt32(registro3.Fields["HANDLE"]),
+                        Quantidade = Convert.ToInt32(registro3.Fields["QUANTIDADE"]),
+                        ValorUnitario = Convert.ToDouble(registro3.Fields["VALORUNITARIO"]),
+                        Total = Convert.ToDouble(registro3.Fields["VALORTOTAL"]),
+                        Nome = Convert.ToString(registro3.Fields["PRODUTO"]),
+
+
+                    });
+                    _CFOP = Convert.ToString(registro3.Fields["CFOP"]);
+                }
+
+                retorno.Add(new NotasFiscalModel()
+                {
+                    Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
+                    DataEmissao = Convert.ToDateTime(registro.Fields["DATAEMISSAO"]),
+                    DocumentoDigitado = Convert.ToString(registro.Fields["DOCUMENTODIGITADO"]),
+                    Valor = Convert.ToDouble(registro.Fields["VALORNOMINAL"]),
+                    Operacao = Convert.ToString(registro.Fields["OPERACAO"]),
+                    Historico = Convert.ToString(registro.Fields["HISTORICO"]),
+                    Observacao = Convert.ToString(registro.Fields["OBSERVACOES"]),
+                    EntradaSaida = Convert.ToString(registro.Fields["ENTRADASAIDA"]),
+                    CFOP = _CFOP,
+                    Parcelas = parcelas,
+                    Produtos = produtos
+
+                });
+            }
+
+            
 
             return retorno;
         }
@@ -768,7 +893,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
 
                 foreach (EntityBase registro2 in registros2)
                 {
-                    Valor = Convert.ToString(registro2.Fields["COLUMN1"]);
+                    Valor = Convert.ToString(registro2.Fields["VALOR"]);
                     
                 }
                 
@@ -792,13 +917,20 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
             //    DataInicioCooperado = DateTime.Parse("01/01/2022"),
             //    CapitalSocial = 1000
             //};
-            Query query = new Query(@"SELECT   A.K_AVATAR,
-                                               A.NOME,
-                                               A.K_DATAINICIOCOOPERADO,
-                                               B.K_CAPITALSOCIAL
-                                        FROM Z_GRUPOUSUARIOS A
+            Query query = new Query(@"SELECT
+                                        A.K_AVATAR,
+                                        A.NOME,
+                                        A.K_DATAINICIOCOOPERADO,
+                                        B.K_CAPITALSOCIAL,
+                                        D.K_RELATORIOENTREGADIA,
+                                        D.K_RELATORIOENTREGAPERIODO,
+                                        D.K_RELATORIOPROGRAMACAO
+                                    FROM
+                                        Z_GRUPOUSUARIOS A
                                         CROSS JOIN EMPRESAS B
-                                        WHERE A.HANDLE = @USUARIO ");
+                                        CROSS JOIN GN_PARAMETROS D
+                                    WHERE
+                                        A.HANDLE = @USUARIO");
             var registros = query.Execute();
             byte[] bytes;
             foreach (EntityBase registro in registros)
@@ -816,6 +948,9 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                 retorno.Nome = Convert.ToString(registro.Fields["NOME"]);
                 retorno.DataInicioCooperado = Convert.ToDateTime(registro.Fields["K_DATAINICIOCOOPERADO"]);
                 retorno.CapitalSocial = Convert.ToInt32(registro.Fields["K_CAPITALSOCIAL"]);
+                retorno.RelatorioEntregaDia = Convert.ToInt32(registro.Fields["K_RELATORIOENTREGADIA"]);
+                retorno.RelatorioEntregaPeriodo = Convert.ToInt32(registro.Fields["K_RELATORIOENTREGAPERIODO"]);
+                retorno.RelatorioEntregaProgramacao = Convert.ToInt32(registro.Fields["K_RELATORIOPROGRAMACAO"]);
             }
 
 
@@ -936,9 +1071,9 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                 {
                     Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
                     Numero = Convert.ToInt32(registro.Fields["NUMERO"]),
-                    Titulo = Convert.ToString(registro.Fields["TITULO"]),
-                    Mensagem = Convert.ToString(registro.Fields["MENSAGEM"]),
-                    Resposta = Convert.ToString(registro.Fields["RESPOSTA"]),
+                    Titulo = registro.Fields["TITULO"] != null ? Convert.ToString(registro.Fields["TITULO"]) : "",
+                    Mensagem = registro.Fields["MENSAGEM"] != null ? Convert.ToString(registro.Fields["MENSAGEM"]) : "",
+                    Resposta = registro.Fields["RESPOSTA"] != null ? Convert.ToString(registro.Fields["RESPOSTA"]) : "",
                     Color = ColorField.OleColorToHtmlHex(corInt),//"#" + corInt.ToString("X").PadRight(6, '0'),
                     Status = Convert.ToInt32(registro.Fields["STATUS"])
                 });

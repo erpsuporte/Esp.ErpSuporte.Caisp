@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2DBBE23E-AE7E-4126-869D-DB78E43BBA75}</ProjectGuid>
+    <ProjectGuid>{A4AD658F-F656-4718-AB79-6A0FE0F8649A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Esp.ErpSuporte.Caisp.ESPECIFICO.IOC</RootNamespace>
@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\Provider\Bin\</OutputPath>
+    <OutputPath>..\..\..\..\..\..\Benner\Web\NEW_CORP_CAISP_DEV_20230328\WebApp\Provider\Bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -35,8 +35,7 @@
       <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\Benner.Tecnologia.Business.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="NINJECT, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="NINJECT">
       <HintPath>..\..\..\..\..\..\Benner\CORP_MEGA_DEV_20220217\NINJECT.DLL</HintPath>
       <Private>False</Private>
     </Reference>
@@ -54,13 +53,13 @@
     <Compile Include="RegiterModule.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Esp.ErpSuporte.Caisp.Business\Esp.ErpSuporte.Caisp.Business.csproj">
-      <Project>{525a43da-8f00-4872-ac2a-9ad8ba24229d}</Project>
-      <Name>Esp.ErpSuporte.Caisp.Business</Name>
+    <ProjectReference Include="..\ESP.Erpsuporte.Caisp.Business\Esp.Erpsuporte.Caisp.Business.csproj">
+      <Project>{c7f65543-fc50-4743-9f77-ef15990723f0}</Project>
+      <Name>Esp.Erpsuporte.Caisp.Business</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Esp.ErpSuporte.Caisp.Components\Esp.ErpSuporte.Caisp.Components.csproj">
-      <Project>{9354b776-7343-4e29-9e0a-5590585b90d3}</Project>
+      <Project>{6a1193e1-f8c8-4d17-941e-4ffabb2f6135}</Project>
       <Name>Esp.ErpSuporte.Caisp.Components</Name>
       <Private>False</Private>
     </ProjectReference>

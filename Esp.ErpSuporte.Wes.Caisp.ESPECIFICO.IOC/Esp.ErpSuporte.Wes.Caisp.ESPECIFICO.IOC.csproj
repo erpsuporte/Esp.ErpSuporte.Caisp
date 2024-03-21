@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F63581B6-BE34-4512-98AE-17E5E2DF0B46}</ProjectGuid>
+    <ProjectGuid>{E3C4F7D7-D6A7-4EBD-94B2-363ED7178F1C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Esp.ErpSuporte.Wes.Caisp.ESPECIFICO.IOC</RootNamespace>
@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\</OutputPath>
+    <OutputPath>..\..\..\..\..\..\Benner\Web\NEW_CORP_CAISP_DEV_20230328\WebApp\bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -31,11 +31,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Benner.Tecnologia.Business">
+    <Reference Include="Benner.Tecnologia.Business, Version=2008.0.0.0, Culture=neutral, PublicKeyToken=f2db26731026fd37, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\Benner.Tecnologia.Business.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Benner.Tecnologia.Common2">
+    <Reference Include="Benner.Tecnologia.Common2, Version=2008.0.0.0, Culture=neutral, PublicKeyToken=f2db26731026fd37, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\Benner.Tecnologia.Common2.dll</HintPath>
       <Private>False</Private>
     </Reference>
@@ -58,9 +60,9 @@
     <Compile Include="RegiterModule.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Esp.ErpSuporte.Caisp.Business\Esp.ErpSuporte.Caisp.Business.csproj">
-      <Project>{525a43da-8f00-4872-ac2a-9ad8ba24229d}</Project>
-      <Name>Esp.ErpSuporte.Caisp.Business</Name>
+    <ProjectReference Include="..\ESP.Erpsuporte.Caisp.Business\Esp.Erpsuporte.Caisp.Business.csproj">
+      <Project>{c7f65543-fc50-4743-9f77-ef15990723f0}</Project>
+      <Name>Esp.Erpsuporte.Caisp.Business</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
