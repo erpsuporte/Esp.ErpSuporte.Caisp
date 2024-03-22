@@ -835,8 +835,8 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                 {
                     Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
                     DataEmissao = Convert.ToDateTime(registro.Fields["DATAEMISSAO"]),
-                    DocumentoDigitado = Convert.ToString(registro.Fields["DOCUMENTODIGITADO"]),
-                    Valor = Convert.ToDouble(registro.Fields["VALORNOMINAL"]),
+                    DocumentoDigitado = Convert.ToString(registro.Fields["DOCUMENTODIGITADO"]).StartsWith("NFe-") ? Convert.ToString(registro.Fields["DOCUMENTODIGITADO"]).Substring(4) : Convert.ToString(registro.Fields["DOCUMENTODIGITADO"]),
+                Valor = Convert.ToDouble(registro.Fields["VALORNOMINAL"]),
                     Operacao = Convert.ToString(registro.Fields["OPERACAO"]),
                     Historico = Convert.ToString(registro.Fields["HISTORICO"]),
                     Observacao = Convert.ToString(registro.Fields["OBSERVACOES"]),
