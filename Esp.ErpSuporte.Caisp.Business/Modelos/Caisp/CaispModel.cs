@@ -49,7 +49,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
         public string Produto { get; set; }
         public string Variacao { get; set; }
         public int QuantidadeRecebida { get; set; }
-        
+
     }
 
     public class EntregasPeriodoBuscaModel
@@ -118,7 +118,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
         public string Observacao { get; set; }
         public string EntradaSaida { get; set; }
         public List<NotasFiscalProdutosModel> Produtos { get; set; }
-        
+
 
 
     }
@@ -234,13 +234,126 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
         public string Format { get; set; }
         public string Condicao { get; set; }
         public string Tabela { get; set; }
-        public string Campo {  get; set; }
+        public string Campo { get; set; }
     }
     public class ResponseDocumento
     {
         public EntityBase Tabela { get; set; }
-        
+
     }
 
+    public class ProssarAnaliseModel
+    {
+        public string Datainicio { get; set; }
+        public string Datafim { get; set; }
+        public int Processo { get; set; }
 
+    }
+
+    public class QProgramacao
+    {
+        public int Handle { get; set; }
+        public string Nome { get; set; }
+        public int Produto { get; set; }
+        public int Programado { get; set; }
+        public DateTime Periodo { get; set; }
+
+    }
+
+    public class QPedidoMercado
+    {
+        public DateTime DataPedido { get; set; }
+        public string CodigoRef { get; set; }
+        public string Produto { get; set; }
+        public string ProdutoBase { get; set; }
+        public int ProdutoMatriz { get; set; }
+        public int Pedido { get; set; }
+        public int Caisp { get; set; }
+
+    }
+    public class QPedidoCooperado
+    {
+        public DateTime DataPedido { get; set; }
+        public string Produtor { get; set; }
+        public string CodigoRef { get; set; }
+        public string Produto { get; set; }
+        public string ProdutoBase { get; set; }
+        public string ProdutoMatriz { get; set; }
+        public int Pedido { get; set; }
+        public int QuantidadeEntregue { get; set; }
+
+    }
+    public class QCotas
+    {
+        public int Produtor { get; set; }
+        public string ProdutoBase { get; set; }
+        public int ProdutoMatriz { get; set; }
+        public double Cota { get; set; }
+    }
+    public class QOrdemProducao
+    {
+        public string Apelido { get; set; }
+        public DateTime DataOrdem { get; set; }
+        public DateTime DataPedido { get; set; }
+        public int Numero { get; set; }
+        public int CodigoRef { get; set; }
+        public string Produto { get; set; }
+        public string GrupoItens { get; set; }
+        public string Abreviatura { get; set; }
+        public string ProdutoMatriz { get; set; }
+        public int QtdPedida { get; set; }
+        public int FaltaReceber { get; set; }
+        public int QtdRecebida { get; set; }
+    }
+    public class QQuebras
+    {
+        public string Produtor { get; set; }
+        public string Grupo { get; set; }
+        public int Codigo { get; set; }
+        public int CodigoRef { get; set; }
+        public string Produto { get; set; }
+        public string ProdutoBase { get; set; }
+        public string ProdutoMatriz { get; set; }
+        public string Lote { get; set; }
+        public DateTime DataInclusao { get; set; }
+        public DateTime DataBaixa { get; set; }
+        public int QtdEntrada { get; set; }
+        public string UN { get; set; }
+        public int QtdBaixada { get; set; }
+        public string Motivo { get; set; }
+    }
+    public class QNFe
+    {
+        public DateTime DataEmissao { get; set; }
+        public string DocumentoDigitado { get; set; }
+        public int Apelido { get; set; }
+        public int CategoriaFornecedor { get; set; }
+        public int Item { get; set; }
+        public string ItemBase { get; set; }
+        public int ItemMatriz { get; set; }
+        public double ValorLiquido { get; set; }
+        public double DescontoValor { get; set; }
+        public int Quantidade { get; set; }
+        public string CentroDeCusto { get; set; }
+        public string Unidade { get; set; }
+    }
+
+    public class AnaliseCooperado
+    {
+        public int Fornecedor { get; set; }
+        public int Item { get; set; }
+        public double PrecoMedio { get; set; }
+        public int Programado77Dias { get; set; }
+        public double CotaAtual { get; set; }
+        public int PedidoMercado { get; set; }
+        public int OrdemDeCompra { get; set; }
+        public double AtendimentoNfe { get; set; }
+        public double DiferencaNFe { get; set; }
+        public double porcentagemDiferenca { get; set; }
+        public double DiferencaProgramadoAtendido { get; set; }
+        public double porcentagemDiferencaProgramadoAtendid { get; set; }
+        public double NFeXProgramado { get; set; }
+        public double CotaProjetada { get; set; }
+
+    }
 }

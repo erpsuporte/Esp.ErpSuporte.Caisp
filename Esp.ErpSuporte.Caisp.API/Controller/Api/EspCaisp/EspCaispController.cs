@@ -2,6 +2,7 @@
 using Benner.Tecnologia.Common.IoC;
 using Esp.ErpSuporte.Caisp.Business.Interfaces.Caisp;
 using Esp.ErpSuporte.Caisp.Business.Modelos.Caisp;
+using Benner.Tecnologia.Wes.Components.WebApp.Controllers;
 using Ninject;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
     /// </summary>
     [Authorize]
     [RoutePrefix("api/EspCaisp")]
-    public class EspCaispController : ApiController
+    public class EspCaispController : ApiController//ApiController
     {
         // ok deu certo
         ICaisp componente = DependencyContainer.Get<ICaisp>();

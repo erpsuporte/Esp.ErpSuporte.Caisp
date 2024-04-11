@@ -39,6 +39,14 @@
       <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\Benner.Tecnologia.Common2.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Validation, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\Microsoft.Practices.EnterpriseLibrary.Validation.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7">
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
@@ -53,6 +61,13 @@
     <Compile Include="Entidades\GnDocumentos.cs" />
     <Compile Include="Entidades\GnDocumentos.properties.cs" />
     <Compile Include="Entidades\GnDocumentos.userinterface.cs" />
+    <Compile Include="Entidades\GnProcessaranalise.cs" />
+    <Compile Include="Entidades\GnProcessaranalise.properties.cs">
+      <DependentUpon>GnProcessaranalise.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entidades\GnProcessaranalise.userinterface.cs">
+      <DependentUpon>GnProcessaranalise.cs</DependentUpon>
+    </Compile>
     <Compile Include="Entidades\KGnCards.cs" />
     <Compile Include="Entidades\KGnCards.properties.cs" />
     <Compile Include="Entidades\KGnCards.userinterface.cs" />
@@ -68,7 +83,6 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>xcopy $(TargetPath) C:\Benner\Web\NEW_CORP_CAISP_DEV_20230328\WebApp\bin /Y /R</PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -10,37 +10,19 @@ namespace Esp.ErpSuporte.Caisp.Business.Interfaces.Caisp
     public interface ICaisp
     {
         ResponseDocumento BuscarDocumento(RequestDocumento request);
-
-
-        List<ContatosModel> buscarContatos(); //-TABELA -UI -API Funcionando - TESTE (ok)
-        List<DocModel> buscarDoc(BuscaDocModel request); //-TABELA -UI -API Funcionando - TESTE (ok) //vem duas vezes(ok) //publico vai para privado continua publico(não deixar dois usuarios diferentes no localhost)
-        //Atas --CAMPO TIPO  vem como parametro na rota
-        //Estatutos
-        //Circulares Normativas
-        //Desenvolvimento Agricola
-        //DATA VALIDADE CAMPO
-        //você deseja que esse documento seja publico? //publico aberto todo mundo //privado campo tab com  filtro e preencheria K_documentousuario create
-
-        List<EntregasDiaModel> buscarEntregasDia(EntregasDiaBuscarModel request); // -API Funcionando -TESTE (ok) //PARAMETROS DIA
-        List<Eventos> buscarEventos(); //-TABELA -UI -API - Funcionando -TESTE(ok)
-        FinanceiroModel buscarFinanceiro(); //-API Funcionando - TESTAR // saldo tudo diferença de todos documentos em aberto, 3 rotas, filtro de inicio e fim dentro do app
-                                            //saldo geral de tudo.
-
-        
+        List<ContatosModel> buscarContatos();
+        List<DocModel> buscarDoc(BuscaDocModel request);
+        List<EntregasDiaModel> buscarEntregasDia(EntregasDiaBuscarModel request); 
+        List<Eventos> buscarEventos(); 
+        FinanceiroModel buscarFinanceiro();
         List<NotasFiscalModel> buscarNotasFicais(BuscarNotasFiscalModel request);
-        //  rota Consulta notas fiscais filtro no select inicio e fim
+        List<CardModel> buscarCard();
+        UserInfoModel buscarUserInfo();
+        List<ProgramacaoModel> buscarProgramacao(ProgramacaoBuscarModel request);
+        ResponseModel enviarSac(SacModelPost request); 
+        List<SacModelGet> buscarSac(); 
+        List<EntregasItensModel> buscarEntregasPeriodo(EntregasPeriodoBuscaModel request);
+        string ProcessarAnalise(ProssarAnaliseModel request);
 
-
-
-        List<CardModel> buscarCard();// -TABELA -UI -API -Funcionando -TESTE(ok) //Screen Converter para List --VALIDAR QUERY, ADD CAMPO ORDEM, COLUNA VALOR VALIDAR 
-        UserInfoModel buscarUserInfo();// -API -Funcionando -TESTE(ok)
-        List<ProgramacaoModel> buscarProgramacao(ProgramacaoBuscarModel request);// - TABELA BUILDER -UI WEB -DEV API -TESTE(ok)
-        ResponseModel enviarSac(SacModelPost request); // TABELA BUILDER SAC  INSERIR REGISTRO API(ok)
-        List<SacModelGet> buscarSac(); // BUSCAR SAC DO USUARIO LOGADO API -GESTÂO ESTADO WEB  /DATA RECEBIDA /REPOSTA? /QUEM RECEBEU /NOME: OUVIDORIA e EMAIL Configuravel
-        List<EntregasItensModel> buscarEntregasPeriodo(EntregasPeriodoBuscaModel request); // - DEV API SUM ENTREGAS SOMAS DOS ITENS DO PEIRODO DE DIAS - ROTA COM DATAINICIO E DATA FIM DA REQUESIÃO STIMULSOFT GERANDO O PDF -TESTE
-
-
-        //Componente que realiza requisição API e gerencia status, do Sac
-        //Papeis API
     }
 }
