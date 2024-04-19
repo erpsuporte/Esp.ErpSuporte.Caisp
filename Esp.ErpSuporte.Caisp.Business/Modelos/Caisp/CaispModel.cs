@@ -356,4 +356,13 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
         public double CotaProjetada { get; set; }
 
     }
+    public class RequestCarregarFornecerdor
+    {
+        public int Produto { get; set;}
+        public int Quantidade { get;set; }
+        public string DataInicio {  get; set; }
+        public string DataFim { get; set; }
+        public int Handle { get; set; }
+
+    }
 }

@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\..\Benner\Web\NEW_CORP_CAISP_DEV_20230328\WebApp\Provider\Bin\</OutputPath>
+    <OutputPath>..\..\CORP_CAISP\WebApp\Provider\Bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -32,23 +32,23 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BENNER.CORPORATIVO.DEFINICOES">
-      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\Provider\Bin\BENNER.CORPORATIVO.DEFINICOES.DLL</HintPath>
+      <HintPath>C:\Benner\SISTEMA_BENNER\BENNER.CORPORATIVO.DEFINICOES.DLL</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="BENNER.TECNOLOGIA.APPLICATION">
-      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\Provider\Bin\BENNER.TECNOLOGIA.APPLICATION.DLL</HintPath>
+      <HintPath>C:\Benner\Fontes\SISTEMA_BENNER\WebApp\bin\Benner.Tecnologia.Application.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Benner.Tecnologia.Business">
-      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\Benner.Tecnologia.Business.dll</HintPath>
+      <HintPath>C:\Benner\Fontes\SISTEMA_BENNER\WebApp\bin\Benner.Tecnologia.Business.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Benner.Tecnologia.Common2">
-      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\Benner.Tecnologia.Common2.dll</HintPath>
+      <HintPath>C:\Benner\Fontes\SISTEMA_BENNER\WebApp\bin\Benner.Tecnologia.Common2.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Benner.Tecnologia.Metadata">
-      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\Benner.Tecnologia.Metadata.dll</HintPath>
+      <HintPath>C:\Benner\Fontes\SISTEMA_BENNER\WebApp\bin\Benner.Tecnologia.Metadata.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -66,14 +66,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ESP.Erpsuporte.Caisp.Business\Esp.Erpsuporte.Caisp.Business.csproj">
+    <ProjectReference Include="..\Esp.ErpSuporte.Caisp.Business\Esp.ErpSuporte.Caisp.Business.csproj">
       <Project>{c7f65543-fc50-4743-9f77-ef15990723f0}</Project>
-      <Name>Esp.Erpsuporte.Caisp.Business</Name>
+      <Name>Esp.ErpSuporte.Caisp.Business</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy $(TargetPath) C:\Benner\Web\NEW_CORP_CAISP_DEV_20230328\WebApp\bin /Y /R</PostBuildEvent>
+    <PostBuildEvent>xcopy "$(TargetPath)" "E:\Benner Web\CORP_CAISP\WebApp\bin" /Y /R</PostBuildEvent>
   </PropertyGroup>
 </Project>

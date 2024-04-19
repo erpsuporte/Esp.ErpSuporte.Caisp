@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\..\Benner\Web\NEW_CORP_CAISP_DEV_20230328\WebApp\Provider\Bin\</OutputPath>
+    <OutputPath>..\..\CORP_CAISP\WebApp\Provider\Bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -32,11 +32,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Benner.Tecnologia.Business">
-      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\Benner.Tecnologia.Business.dll</HintPath>
+      <HintPath>C:\Benner\Fontes\SISTEMA_BENNER\WebApp\bin\Benner.Tecnologia.Business.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="NINJECT">
-      <HintPath>..\..\..\..\..\..\Benner\CORP_MEGA_DEV_20220217\NINJECT.DLL</HintPath>
+      <HintPath>C:\Benner\Fontes\SISTEMA_BENNER\WebApp\bin\Ninject.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />

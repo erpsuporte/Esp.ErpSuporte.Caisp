@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\..\Benner\Web\NEW_CORP_CAISP_DEV_20230328\WebApp\Provider\Bin\</OutputPath>
+    <OutputPath>..\..\CORP_CAISP\WebApp\Provider\Bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -31,21 +31,32 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Benner.Corporativo.Definicoes, Version=5.16.0.0, Culture=neutral, PublicKeyToken=a31de320233b5ee7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Benner\Fontes\SISTEMA_BENNER\WebApp\bin\Benner.Corporativo.Definicoes.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Benner.Tecnologia.Business">
-      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\Benner.Tecnologia.Business.dll</HintPath>
+      <HintPath>C:\Benner\Fontes\SISTEMA_BENNER\WebApp\bin\Benner.Tecnologia.Business.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Benner.Tecnologia.Common2">
-      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\Benner.Tecnologia.Common2.dll</HintPath>
+      <HintPath>C:\Benner\Fontes\SISTEMA_BENNER\WebApp\bin\Benner.Tecnologia.Common2.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Benner.Tecnologia.Metadata, Version=2008.0.0.0, Culture=neutral, PublicKeyToken=f2db26731026fd37, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Benner\Fontes\SISTEMA_BENNER\WebApp\bin\Benner.Tecnologia.Metadata.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Validation, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\Microsoft.Practices.EnterpriseLibrary.Validation.dll</HintPath>
+      <HintPath>C:\Benner\Fontes\SISTEMA_BENNER\WebApp\bin\Microsoft.Practices.EnterpriseLibrary.Validation.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7">
       <Private>False</Private>
+      <HintPath>C:\Benner\Fontes\SISTEMA_BENNER\WebApp\bin\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -58,6 +69,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entidades\CmProgramadofornecedores.cs" />
+    <Compile Include="Entidades\CmProgramadofornecedores.properties.cs">
+      <DependentUpon>CmProgramadofornecedores.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entidades\CmProgramadofornecedores.userinterface.cs">
+      <DependentUpon>CmProgramadofornecedores.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entidades\CmProgramadoprodutos.cs" />
+    <Compile Include="Entidades\CmProgramadoprodutos.properties.cs">
+      <DependentUpon>CmProgramadoprodutos.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entidades\CmProgramadoprodutos.userinterface.cs">
+      <DependentUpon>CmProgramadoprodutos.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entidades\CmProgramados.cs" />
+    <Compile Include="Entidades\CmProgramados.properties.cs">
+      <DependentUpon>CmProgramados.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entidades\CmProgramados.userinterface.cs">
+      <DependentUpon>CmProgramados.cs</DependentUpon>
+    </Compile>
     <Compile Include="Entidades\GnDocumentos.cs" />
     <Compile Include="Entidades\GnDocumentos.properties.cs" />
     <Compile Include="Entidades\GnDocumentos.userinterface.cs" />
@@ -80,9 +112,12 @@
     <Compile Include="Modelos\Caisp\NotificacaoSacRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Esp\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy $(TargetPath) C:\Benner\Web\NEW_CORP_CAISP_DEV_20230328\WebApp\bin /Y /R</PostBuildEvent>
+    <PostBuildEvent>xcopy "$(TargetPath)" "E:\Benner Web\CORP_CAISP\WebApp\bin" /Y /R
+</PostBuildEvent>
   </PropertyGroup>
 </Project>

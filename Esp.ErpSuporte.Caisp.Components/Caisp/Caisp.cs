@@ -18,6 +18,7 @@ using Benner.Tecnologia.Application.Services.ReportService;
 using static System.Net.WebRequestMethods;
 using Benner.Corporativo.Definicoes.Integracao.Hospitalar;
 using Benner.Corporativo.Definicoes.Producao.OrdensProducao;
+using System.Linq;
 
 namespace Esp.ErpSuporte.Caisp.Components.Caisp
 {
@@ -1098,100 +1099,6 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
             List<QQuebras> RetornoQuebras = new List<QQuebras>(); 
             List<QNFe> RetornoNFe = new List<QNFe>();
 
-            Query queryProgramacao = new Query($@"SELECT A.HANDLE,
-                                                         A.PRODUTO,
-                                                         A.PERIODO,
-                                                         A.PROGRAMADO,
-                                                         B.NOME
-                                                FROM K_GN_PROGRAMACAO A
-                                                        JOIN PD_PRODUTOS B ON A.PRODUTO = B.HANDLE
-                                                         WHERE A.PERIODO BETWEEN CONVERT(datetime, :INICIO , 103) AND CONVERT(datetime, :FIM, 103);");
-            queryProgramacao.Parameters.Add(new Parameter("INICIO", request.Datainicio));
-            queryProgramacao.Parameters.Add(new Parameter("FIM", request.Datafim));
-            var Programacao = queryProgramacao.Execute();
-            foreach (var registro in Programacao)
-            {
-                RetornoProgramacao.Add(new QProgramacao()
-                {
-                    Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
-                    Nome = Convert.ToString(registro.Fields["NOME"]),
-                    Produto = Convert.ToInt32(registro.Fields["PRODUTO"]),
-                    Programado = Convert.ToInt32(registro.Fields["PROGRAMADO"]),
-                    Periodo = Convert.ToDateTime(registro.Fields["PERIODO"])
-
-                });
-            }
-
-            Query queryPedidoCooperado = new Query(@"SELECT K_CM_CORTES.DATADOPEDIDO,
-                                                               GN_PESSOAS.APELIDO 'PRODUTOR',
-                                                               PD_PRODUTOS.CODIGOREFERENCIA 'CODIGOREFERENCIA',
-                                                               PD_PRODUTOS.NOME 'PRODUTO',
-                                                               PRODUTOBASE.NOME 'PRODUTOBASE',
-                                                               PRODUTOMATRIZ.NOME 'PRODUTOMATRIZ',
-                                                               SUM(K_CM_CORTEPRODUTOFORNECEDORES.QUANTIDADEAJUSTADA)'PEDIDO',
-                                                               SUM(QTDEENTREGA) QTDEENTREGUE
-                                                          FROM CP_ORDENSCOMPRAITENS
-                                                               LEFT OUTER JOIN K_CM_CORTEPRODUTOFORNECEDORES ON (K_CM_CORTEPRODUTOFORNECEDORES.HANDLE = CP_ORDENSCOMPRAITENS.K_CORTEPRODUTOFORNECEDOR)
-                                                               LEFT OUTER JOIN K_CM_CORTEPRODUTOS ON (K_CM_CORTEPRODUTOS.HANDLE = K_CM_CORTEPRODUTOFORNECEDORES.CORTEPRODUTO)
-                                                               LEFT OUTER JOIN K_CM_CORTES ON (K_CM_CORTES.HANDLE = K_CM_CORTEPRODUTOS.CORTE)
-                                                               LEFT OUTER JOIN GN_PESSOAS ON (GN_PESSOAS.HANDLE = K_CM_CORTEPRODUTOFORNECEDORES.PESSOA)
-                                                               LEFT OUTER JOIN PD_PRODUTOS ON(PD_PRODUTOS.HANDLE = K_CM_CORTEPRODUTOS.PRODUTO)
-                                                               LEFT OUTER JOIN PD_PRODUTOS PRODUTOBASE ON (PRODUTOBASE.HANDLE = PD_PRODUTOS.K_PRODUTOBASE)
-                                                               LEFT OUTER JOIN PD_PRODUTOS PRODUTOMATRIZ ON (PRODUTOMATRIZ.HANDLE = PD_PRODUTOS.K_PRODUTOMATRIZ)
-                                                               LEFT OUTER JOIN CP_RECEBIMENTOFISICO ON (CP_ORDENSCOMPRAITENS.HANDLE = CP_RECEBIMENTOFISICO.ORDEMCOMPRAITEM)
-                                                         WHERE DATADOPEDIDO >= :INICIO
-                                                               AND DATADOPEDIDO < = :FIM
-                                                               AND PD_PRODUTOS.NOME NOT LIKE '%MPH%'
-                                                         GROUP BY K_CM_CORTES.DATADOPEDIDO,
-                                                               GN_PESSOAS.APELIDO,
-                                                               PD_PRODUTOS.CODIGOREFERENCIA,
-                                                               PD_PRODUTOS.NOME,
-                                                               PRODUTOBASE.NOME,
-                                                               PRODUTOMATRIZ.NOME
-                                                         UNION ALL SELECT K_CM_PREVIAS.DATADOPEDIDO,
-                                                                          GN_PESSOAS.APELIDO 'PRODUTOR',
-                                                                          PD_PRODUTOS.CODIGOREFERENCIA 'CODIGOREFERENCIA',
-                                                                          PD_PRODUTOS.NOME 'PRODUTO',
-                                                                          PRODUTOBASE.NOME 'PRODUTOBASE',
-                                                                          PRODUTOMATRIZ.NOME 'PRODUTOMATRIZ',
-                                                                          SUM(K_CM_PREVIAPRODUTOFORNECEDORES.QUANTIDADEAJUSTADA) 'PEDIDO',
-                                                                          SUM(QTDEENTREGA) QTDEENTREGUE
-                                                                     FROM CP_ORDENSCOMPRAITENS
-                                                                          LEFT OUTER JOIN K_CM_PREVIAPRODUTOFORNECEDORES ON (K_CM_PREVIAPRODUTOFORNECEDORES.HANDLE = CP_ORDENSCOMPRAITENS.K_PREVIAPRODUTOFORNECEDOR)
-                                                                          LEFT OUTER JOIN K_CM_PREVIAPRODUTOS ON (K_CM_PREVIAPRODUTOS.HANDLE = K_CM_PREVIAPRODUTOFORNECEDORES.PREVIAPRODUTO)
-                                                                          LEFT OUTER JOIN K_CM_PREVIAS ON (K_CM_PREVIAS.HANDLE = K_CM_PREVIAPRODUTOS.PREVIA)
-                                                                          LEFT OUTER JOIN GN_PESSOAS ON (GN_PESSOAS.HANDLE = K_CM_PREVIAPRODUTOFORNECEDORES.PESSOA)
-                                                                          LEFT OUTER JOIN PD_PRODUTOS ON(PD_PRODUTOS.HANDLE = K_CM_PREVIAPRODUTOS.PRODUTO)
-                                                                          LEFT OUTER JOIN PD_PRODUTOS PRODUTOBASE ON (PRODUTOBASE.HANDLE = PD_PRODUTOS.K_PRODUTOBASE)
-                                                                          LEFT OUTER JOIN PD_PRODUTOS PRODUTOMATRIZ ON (PRODUTOMATRIZ.HANDLE = PD_PRODUTOS.K_PRODUTOMATRIZ)
-                                                                          LEFT OUTER JOIN CP_RECEBIMENTOFISICO ON (CP_ORDENSCOMPRAITENS.HANDLE = CP_RECEBIMENTOFISICO.ORDEMCOMPRAITEM)
-                                                                    WHERE DATADOPEDIDO >= :INICIO
-                                                                          AND DATADOPEDIDO < = :FIM
-                                                                          AND PD_PRODUTOS.NOME NOT LIKE '%MPH%'
-                                                                    GROUP BY K_CM_PREVIAS.DATADOPEDIDO,
-                                                                          GN_PESSOAS.APELIDO,
-                                                                          PD_PRODUTOS.CODIGOREFERENCIA,
-                                                                          PD_PRODUTOS.NOME,
-                                                                          PRODUTOBASE.NOME,
-                                                                          PRODUTOMATRIZ.NOME ");
-            queryPedidoCooperado.Parameters.Add(new Parameter("INICIO", request.Datainicio));
-            queryPedidoCooperado.Parameters.Add(new Parameter("FIM", request.Datafim));
-            var PedidoCooperado = queryPedidoCooperado.Execute();
-            foreach (var registro in PedidoCooperado)
-            {
-                RetornoPedidoCooperado.Add(new QPedidoCooperado()
-                {
-                    DataPedido = Convert.ToDateTime(registro.Fields["DATADOPEDIDO"]),
-                    Produtor = Convert.ToString(registro.Fields["PRODUTOR"]),
-                    CodigoRef = Convert.ToString(registro.Fields["CODIGOREFERENCIA"]),
-                    Produto = Convert.ToString(registro.Fields["PRODUTO"]),
-                    ProdutoBase = Convert.ToString(registro.Fields["PRODUTOBASE"]),
-                    ProdutoMatriz = Convert.ToString(registro.Fields["PRODUTOMATRIZ"]),
-                    Pedido = Convert.ToInt32(registro.Fields["PEDIDO"]),
-                    QuantidadeEntregue = Convert.ToInt32(registro.Fields["QTDEENTREGUE"]),
-
-                });
-            }
 
             Query queryOrdemProducao = new Query(@"SELECT GN_PESSOAS.APELIDO,
                                                                CP_ORDENSCOMPRA.DATADAORDEM,
@@ -1386,38 +1293,63 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                     CentroDeCusto = Convert.ToString(registro.Fields["CENTRODECUSTO"]),
                     Unidade = Convert.ToString(registro.Fields["UNIDADE"])
                 });
+                
+                
+                Query VerificarRegistros = new Query($@"SELECT * FROM K_GN_ANALISECOOPERADO A
+                                                        WHERE A.FORNECEDOR = :PRODUTOR AND A.ITEM = :PRODUTOMATRIZ AND A.PROCESSO = {request.Processo}");
+                VerificarRegistros.Parameters.Add("PRODUTOR", Convert.ToInt32(registro.Fields["APELIDO"]));
+                VerificarRegistros.Parameters.Add("PRODUTOMATRIZ", Convert.ToInt32(registro.Fields["ITEM MATRIZ"]));
+                var verificar = VerificarRegistros.Execute();
+                if (verificar.Count == 0)
+                {
+                    double SomaValorLiquido = 0;
+                    double SomaQuantidadeNFe = 0;
+                    double Fornecedor = Convert.ToInt32(registro.Fields["APELIDO"]);
+                    double ProdutoMatriz = Convert.ToInt32(registro.Fields["ITEM MATRIZ"]);
 
-                try
-                {
-                    var QAnaliseCooperado = Entity.Get(EntityDefinition.GetByName("K_GN_ANALISECOOPERADO"), new Criteria("A.FORNECEDOR = :APELIDO AND A.ITEM = :ITEM", new Parameter("APELIDO", Convert.ToInt32(registro.Fields["APELIDO"])), new Parameter("ITEM", Convert.ToInt32(registro.Fields["ITEM MATRIZ"]))));
-                }
-                catch(Exception ex)
-                {
+                    foreach (var precomedio in NFe)
+                    {
+                        if (Fornecedor == Convert.ToInt32(precomedio.Fields["APELIDO"]) && ProdutoMatriz == Convert.ToInt32(precomedio.Fields["ITEM MATRIZ"]))
+                        {
+                            SomaValorLiquido += Convert.ToDouble(precomedio.Fields["VALORLIQUIDO"]);
+                            SomaQuantidadeNFe += Convert.ToDouble(precomedio.Fields["QUANTIDADE"]);
+                        }
+                        
+                    }
                     EntityBase AnaliseCooperado = Entity.Create(EntityDefinition.GetByName("K_GN_ANALISECOOPERADO"));
                     AnaliseCooperado.Fields["FORNECEDOR"] = new EntityAssociation(Convert.ToInt32(registro.Fields["APELIDO"]), EntityDefinition.GetByName("GN_PESSOAS"));
                     AnaliseCooperado.Fields["ITEM"] = new EntityAssociation(Convert.ToInt32(registro.Fields["ITEM MATRIZ"]), EntityDefinition.GetByName("PD_PRODUTOS"));
                     AnaliseCooperado.Fields["PROCESSO"] = new EntityAssociation(request.Processo, EntityDefinition.GetByName("PD_PRODUTOS"));
-                    double SomaValorLiquido =0;
-                    double SomaQuantidadeNFe = 0;
-                    double Fornecedor = Convert.ToInt32(registro.Fields["APELIDO"]);
-                    double Item = Convert.ToInt32(registro.Fields["ITEM MATRIZ"]);
-
-                    foreach (var precomedio in NFe)
-                    {
-                        if( Fornecedor == Convert.ToInt32(registro.Fields["APELIDO"]) && Item == Convert.ToInt32(registro.Fields["ITEM MATRIZ"]))
-                        {
-                            SomaValorLiquido += Convert.ToDouble(registro.Fields["VALORLIQUIDO"]);
-                        }
-                        if(Item == Convert.ToInt32(registro.Fields["ITEM MATRIZ"]))
-                        {
-                            SomaQuantidadeNFe += Convert.ToInt32(registro.Fields["QUANTIDADE"]);
-                        }
-                    }
-                    AnaliseCooperado.Fields["PRECOMEDIO"] = SomaValorLiquido/ SomaQuantidadeNFe;
+                    AnaliseCooperado.Fields["PRECOMEDIO"] = SomaValorLiquido / SomaQuantidadeNFe;
                     AnaliseCooperado.Save();
 
                 }
+                try
+                {
+                    EntityBase AnaliseCooperado1 = Entity.Get(EntityDefinition.GetByName("K_GN_ANALISECOOPERADO"), new Criteria($"A.FORNECEDOR = :PRODUTOR AND A.ITEM = :PRODUTOMATRIZ AND A.PROCESSO = {request.Processo}", new Parameter("PRODUTOR", Convert.ToInt32(registro.Fields["APELIDO"])), new Parameter("PRODUTOMATRIZ", Convert.ToInt32(registro.Fields["ITEM MATRIZ"]))), GetMode.Edit);
+                    int Fornecedor1 = Convert.ToInt32(registro.Fields["APELIDO"]);
+                    int ProdutoMatriz1 = Convert.ToInt32(registro.Fields["ITEM MATRIZ"]);
+                    double SomaQuantidadeNFe1 = 0;
+                    foreach (var SomaQuantidade in NFe)
+                    {
+                        if (Fornecedor1 == Convert.ToInt32(SomaQuantidade.Fields["APELIDO"]) && ProdutoMatriz1 == Convert.ToInt32(SomaQuantidade.Fields["ITEM MATRIZ"]))
+                        {
+                            SomaQuantidadeNFe1 += Convert.ToInt32(SomaQuantidade.Fields["QUANTIDADE"]);
+                        }
+                    }
+                    AnaliseCooperado1.Fields["ATENDIMENTONFE"] = SomaQuantidadeNFe1;
+                    AnaliseCooperado1.Save();
+                }
+                catch(Exception ex)
+                {
 
+                }
+                        
+                    
+                    //EntityBase VerificarAnaliseCooperado = Entity.Get(EntityDefinition.GetByName("K_GN_ANALISECOOPERADO"), new Criteria($"A.FORNECEDOR = :PRODUTOR AND A.ITEM = :PRODUTOMATRIZ AND A.PROCESSO = {request.Processo}", new Parameter("PRODUTOR", Convert.ToInt32(registro.Fields["APELIDO"])), new Parameter("PRODUTOMATRIZ", Convert.ToInt32(registro.Fields["ITEM MATRIZ"]))));
+
+                
+                
             }
 
             Query queryCotas = new Query(@"SELECT GN_PESSOAS.HANDLE 'PRODUTOR', -- troquei apelido pelo HANDLE
@@ -1456,29 +1388,33 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                     ProdutoMatriz = Convert.ToInt32(registro.Fields["PRODUTOMATRIZ"]),
                     Cota = Convert.ToInt32(registro.Fields["COTA"])
                 });
-                try
+                Query VerificarRegistros = new Query($@"SELECT * FROM K_GN_ANALISECOOPERADO A
+                                                        WHERE A.FORNECEDOR = :PRODUTOR AND A.ITEM = :PRODUTOMATRIZ AND A.PROCESSO = {request.Processo}");
+                VerificarRegistros.Parameters.Add("PRODUTOR", Convert.ToInt32(registro.Fields["PRODUTOR"]));
+                VerificarRegistros.Parameters.Add("PRODUTOMATRIZ", Convert.ToInt32(registro.Fields["PRODUTOMATRIZ"]));
+                var verificar = VerificarRegistros.Execute();
+                if (verificar.Count != 0)
                 {
-                    EntityBase AnaliseCooperado = Entity.Get(EntityDefinition.GetByName("K_GN_ANALISECOOPERADO"), new Criteria("A.FORNECEDOR = :PRODUTOR AND A.ITEM = :PRODUTOMATRIZ", new Parameter("PRODUTOR", Convert.ToInt32(registro.Fields["PRODUTOR"])), new Parameter("PRODUTOMATRIZ", Convert.ToInt32(registro.Fields["PRODUTOMATRIZ"]))), GetMode.Edit);
+                    EntityBase AnaliseCooperado = Entity.Get(EntityDefinition.GetByName("K_GN_ANALISECOOPERADO"), new Criteria($"A.FORNECEDOR = :PRODUTOR AND A.ITEM = :PRODUTOMATRIZ AND A.PROCESSO = {request.Processo}", new Parameter("PRODUTOR", Convert.ToInt32(registro.Fields["PRODUTOR"])), new Parameter("PRODUTOMATRIZ", Convert.ToInt32(registro.Fields["PRODUTOMATRIZ"]))), GetMode.Edit);
                     double SomaValorMedia = 0;
                     double Contador = 0;
-                    double Fornecedor = Convert.ToInt32(registro.Fields["PRODUTOR"]);
-                    double ProdutoMatriz = Convert.ToInt32(registro.Fields["PRODUTOMATRIZ"]);
+                    int Fornecedor = Convert.ToInt32(registro.Fields["PRODUTOR"]);
+                    int ProdutoMatriz = Convert.ToInt32(registro.Fields["PRODUTOMATRIZ"]);
                     foreach (var Media in Cotas)
                     {
-                        if (Fornecedor == Convert.ToInt32(registro.Fields["PRODUTOR"]) && ProdutoMatriz == Convert.ToInt32(registro.Fields["PRODUTOMATRIZ"]))
+                        if (Fornecedor == Convert.ToInt32(Media.Fields["PRODUTOR"]) && ProdutoMatriz == Convert.ToInt32(Media.Fields["PRODUTOMATRIZ"]))
                         {
                             Contador += 1;
-                            SomaValorMedia += Convert.ToInt32(registro.Fields["COTA"]);
-
+                            SomaValorMedia += Convert.ToDouble(Media.Fields["COTA"]);
                         }
                     }
-                    AnaliseCooperado.Fields["COTAATUAL"] = SomaValorMedia / Contador;
-                    AnaliseCooperado.Save();
+                    if (SomaValorMedia != 0)
+                    {
+                        AnaliseCooperado.Fields["COTAATUAL"] = SomaValorMedia / Contador;
+                        AnaliseCooperado.Save();
+                    }
                 }
-                catch (Exception ex)
-                {
-
-                }
+                
             }
 
             Query queryPedidoMercado = new Query(@"SELECT K_CM_CORTES.DATADOPEDIDO,
@@ -1505,7 +1441,6 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
             queryPedidoMercado.Parameters.Add(new Parameter("INICIO", request.Datainicio));
             queryPedidoMercado.Parameters.Add(new Parameter("FIM", request.Datafim));
             var PedidoMercado = queryPedidoMercado.Execute();
-
             foreach (var registro in PedidoMercado)
             {
                 RetornoPedidoMercado.Add(new QPedidoMercado()
@@ -1520,52 +1455,346 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
 
                 });
 
-                try
-                {
-                    double ProdutoMatriz = Convert.ToInt32(registro.Fields["PRODUTOMATRIZ"]);
-                    double SomaValor = 0;
-                    
+                
+                int ProdutoMatriz = Convert.ToInt32(registro.Fields["PRODUTOMATRIZ"]);
+                double SomaValor = 0;
 
-                    foreach (var Soma in PedidoMercado)
+                Query VerificarRegistros = new Query($@"SELECT * FROM K_GN_ANALISECOOPERADO A
+                                                    WHERE A.ITEM = :PRODUTOMATRIZ AND A.PROCESSO = {request.Processo}");
+                VerificarRegistros.Parameters.Add("PRODUTOMATRIZ", Convert.ToInt32(registro.Fields["PRODUTOMATRIZ"]));
+                var verificar = VerificarRegistros.Execute();
+                foreach (var Soma in PedidoMercado)
+                {
+                    if (ProdutoMatriz == Convert.ToInt32(Soma.Fields["PRODUTOMATRIZ"]))
                     {
-                        if (ProdutoMatriz == Convert.ToInt32(registro.Fields["PRODUTOMATRIZ"]))
-                        {
-                            SomaValor += Convert.ToInt32(Soma.Fields["PEDIDO"]);
-                        }
+                        SomaValor += Convert.ToInt32(Soma.Fields["PEDIDO"]);
                     }
-                    List<EntityBase> QAnaliseCooperado = Entity.GetMany(EntityDefinition.GetByName("K_GN_ANALISECOOPERADO"), new Criteria("A.ITEM = :PRODUTOMATRIZ",new Parameter("PRODUTOMATRIZ", Convert.ToInt32(registro.Fields["PRODUTOMATRIZ"]))));
-                    
-                    foreach (var registro1 in QAnaliseCooperado)
+                }
+                if (verificar.Count != 0)
+                {
+                        
+                    //List<EntityBase> QAnaliseCooperado = Entity.GetMany(EntityDefinition.GetByName("K_GN_ANALISECOOPERADO"), new Criteria("A.ITEM = :PRODUTOMATRIZ",new Parameter("PRODUTOMATRIZ", Convert.ToInt32(registro.Fields["PRODUTOMATRIZ"]))));
+
+                    foreach (var registro1 in verificar)
                     {
-                        int Fornecedor = Convert.ToInt32(((EntityAssociation)registro1.Fields["FORNECEDOR"]).Handle);
+                            
+                        EntityBase AnaliseCooperado = Entity.Get(EntityDefinition.GetByName("K_GN_ANALISECOOPERADO"), new Criteria($"A.FORNECEDOR = :PRODUTOR AND A.ITEM = :PRODUTOMATRIZ AND A.PROCESSO = {request.Processo}", new Parameter("PRODUTOR", Convert.ToInt32(registro1.Fields["FORNECEDOR"])), new Parameter("PRODUTOMATRIZ", Convert.ToInt32(registro1.Fields["ITEM"]))), GetMode.Edit);
+                        int Fornecedor = Convert.ToInt32(registro1.Fields["FORNECEDOR"]);
                         double SomaCota = 0;
-                        int Contador= 0;
+                        int Contador = 0;
                         foreach (var Soma in Cotas)
                         {
-                            if (Fornecedor == Convert.ToInt32(Soma.Fields["PRODUTOR"]) && ProdutoMatriz == Convert.ToInt32(registro.Fields["PRODUTOMATRIZ"]))
+                            if (Fornecedor == Convert.ToInt32(Soma.Fields["PRODUTOR"]) && ProdutoMatriz == Convert.ToInt32(Soma.Fields["PRODUTOMATRIZ"]) && Convert.ToInt32(registro1.Fields["FORNECEDOR"]) == Convert.ToInt32(Soma.Fields["PRODUTOR"]))
                             {
-                                SomaCota += Convert.ToInt32(Soma.Fields["COTA"]);
+                                SomaCota += Convert.ToDouble(Soma.Fields["COTA"]);
                                 Contador += 1;
                             }
                         }
-                        double MediaSomatoria = SomaCota / Contador;
-                        EntityBase AnaliseCooperado = Entity.Get(EntityDefinition.GetByName("K_GN_ANALISECOOPERADO"), new Criteria("A.FORNECEDOR = :PRODUTOR AND A.ITEM = :PRODUTOMATRIZ", new Parameter("PRODUTOR", Convert.ToInt32(((EntityAssociation)registro1.Fields["FORNECEDOR"]).Handle)), new Parameter("PRODUTOMATRIZ", Convert.ToInt32(((EntityAssociation)registro1.Fields["ITEM"]).Handle))), GetMode.Edit);
-                        AnaliseCooperado.Fields["PEDIDOMERCADO"] = SomaValor / 100 * MediaSomatoria;
-                        AnaliseCooperado.Save();
+                        if (SomaCota != 0 && Contador != 0)
+                        {
+                            double MediaSomatoria = SomaCota / Contador;
+                            AnaliseCooperado.Fields["PEDIDOMERCADO"] = (SomaValor / 100) * MediaSomatoria;
+                            AnaliseCooperado.Save();
+                        }
                     }
-
-
-
                 }
-                catch (Exception ex)
+
+
+
+            }
+
+            Query queryPedidoCooperado = new Query(@"SELECT K_CM_CORTES.DATADOPEDIDO,
+                                                               GN_PESSOAS.HANDLE 'PRODUTOR',
+                                                               PD_PRODUTOS.CODIGOREFERENCIA 'CODIGOREFERENCIA',
+                                                               PD_PRODUTOS.NOME 'PRODUTO',
+                                                               PRODUTOBASE.NOME 'PRODUTOBASE',
+                                                               PRODUTOMATRIZ.HANDLE 'PRODUTOMATRIZ',
+                                                               SUM(K_CM_CORTEPRODUTOFORNECEDORES.QUANTIDADEAJUSTADA)'PEDIDO',
+                                                               SUM(QTDEENTREGA) QTDEENTREGUE
+                                                          FROM CP_ORDENSCOMPRAITENS
+                                                               LEFT OUTER JOIN K_CM_CORTEPRODUTOFORNECEDORES ON (K_CM_CORTEPRODUTOFORNECEDORES.HANDLE = CP_ORDENSCOMPRAITENS.K_CORTEPRODUTOFORNECEDOR)
+                                                               LEFT OUTER JOIN K_CM_CORTEPRODUTOS ON (K_CM_CORTEPRODUTOS.HANDLE = K_CM_CORTEPRODUTOFORNECEDORES.CORTEPRODUTO)
+                                                               LEFT OUTER JOIN K_CM_CORTES ON (K_CM_CORTES.HANDLE = K_CM_CORTEPRODUTOS.CORTE)
+                                                               LEFT OUTER JOIN GN_PESSOAS ON (GN_PESSOAS.HANDLE = K_CM_CORTEPRODUTOFORNECEDORES.PESSOA)
+                                                               LEFT OUTER JOIN PD_PRODUTOS ON(PD_PRODUTOS.HANDLE = K_CM_CORTEPRODUTOS.PRODUTO)
+                                                               LEFT OUTER JOIN PD_PRODUTOS PRODUTOBASE ON (PRODUTOBASE.HANDLE = PD_PRODUTOS.K_PRODUTOBASE)
+                                                               LEFT OUTER JOIN PD_PRODUTOS PRODUTOMATRIZ ON (PRODUTOMATRIZ.HANDLE = PD_PRODUTOS.K_PRODUTOMATRIZ)
+                                                               LEFT OUTER JOIN CP_RECEBIMENTOFISICO ON (CP_ORDENSCOMPRAITENS.HANDLE = CP_RECEBIMENTOFISICO.ORDEMCOMPRAITEM)
+                                                         WHERE DATADOPEDIDO >= :INICIO
+                                                               AND DATADOPEDIDO < = :FIM
+                                                               AND PD_PRODUTOS.NOME NOT LIKE '%MPH%'
+                                                         GROUP BY K_CM_CORTES.DATADOPEDIDO,
+                                                               GN_PESSOAS.HANDLE,
+                                                               PD_PRODUTOS.CODIGOREFERENCIA,
+                                                               PD_PRODUTOS.NOME,
+                                                               PRODUTOBASE.NOME,
+                                                               PRODUTOMATRIZ.HANDLE
+                                                         UNION ALL SELECT K_CM_PREVIAS.DATADOPEDIDO,
+                                                                          GN_PESSOAS.HANDLE 'PRODUTOR',
+                                                                          PD_PRODUTOS.CODIGOREFERENCIA 'CODIGOREFERENCIA',
+                                                                          PD_PRODUTOS.NOME 'PRODUTO',
+                                                                          PRODUTOBASE.NOME 'PRODUTOBASE',
+                                                                          PRODUTOMATRIZ.HANDLE 'PRODUTOMATRIZ',
+                                                                          SUM(K_CM_PREVIAPRODUTOFORNECEDORES.QUANTIDADEAJUSTADA) 'PEDIDO',
+                                                                          SUM(QTDEENTREGA) QTDEENTREGUE
+                                                                     FROM CP_ORDENSCOMPRAITENS
+                                                                          LEFT OUTER JOIN K_CM_PREVIAPRODUTOFORNECEDORES ON (K_CM_PREVIAPRODUTOFORNECEDORES.HANDLE = CP_ORDENSCOMPRAITENS.K_PREVIAPRODUTOFORNECEDOR)
+                                                                          LEFT OUTER JOIN K_CM_PREVIAPRODUTOS ON (K_CM_PREVIAPRODUTOS.HANDLE = K_CM_PREVIAPRODUTOFORNECEDORES.PREVIAPRODUTO)
+                                                                          LEFT OUTER JOIN K_CM_PREVIAS ON (K_CM_PREVIAS.HANDLE = K_CM_PREVIAPRODUTOS.PREVIA)
+                                                                          LEFT OUTER JOIN GN_PESSOAS ON (GN_PESSOAS.HANDLE = K_CM_PREVIAPRODUTOFORNECEDORES.PESSOA)
+                                                                          LEFT OUTER JOIN PD_PRODUTOS ON(PD_PRODUTOS.HANDLE = K_CM_PREVIAPRODUTOS.PRODUTO)
+                                                                          LEFT OUTER JOIN PD_PRODUTOS PRODUTOBASE ON (PRODUTOBASE.HANDLE = PD_PRODUTOS.K_PRODUTOBASE)
+                                                                          LEFT OUTER JOIN PD_PRODUTOS PRODUTOMATRIZ ON (PRODUTOMATRIZ.HANDLE = PD_PRODUTOS.K_PRODUTOMATRIZ)
+                                                                          LEFT OUTER JOIN CP_RECEBIMENTOFISICO ON (CP_ORDENSCOMPRAITENS.HANDLE = CP_RECEBIMENTOFISICO.ORDEMCOMPRAITEM)
+                                                                    WHERE DATADOPEDIDO >= :INICIO
+                                                                          AND DATADOPEDIDO < = :FIM
+                                                                          AND PD_PRODUTOS.NOME NOT LIKE '%MPH%'
+                                                                    GROUP BY K_CM_PREVIAS.DATADOPEDIDO,
+                                                                          GN_PESSOAS.HANDLE,
+                                                                          PD_PRODUTOS.CODIGOREFERENCIA,
+                                                                          PD_PRODUTOS.NOME,
+                                                                          PRODUTOBASE.NOME,
+                                                                          PRODUTOMATRIZ.HANDLE ");
+            queryPedidoCooperado.Parameters.Add(new Parameter("INICIO", request.Datainicio));
+            queryPedidoCooperado.Parameters.Add(new Parameter("FIM", request.Datafim));
+            var PedidoCooperado = queryPedidoCooperado.Execute();
+            foreach (var registro in PedidoCooperado)
+            {
+                RetornoPedidoCooperado.Add(new QPedidoCooperado()
                 {
+                    DataPedido = Convert.ToDateTime(registro.Fields["DATADOPEDIDO"]),
+                    Produtor = Convert.ToString(registro.Fields["PRODUTOR"]),
+                    CodigoRef = Convert.ToString(registro.Fields["CODIGOREFERENCIA"]),
+                    Produto = Convert.ToString(registro.Fields["PRODUTO"]),
+                    ProdutoBase = Convert.ToString(registro.Fields["PRODUTOBASE"]),
+                    ProdutoMatriz = Convert.ToString(registro.Fields["PRODUTOMATRIZ"]),
+                    Pedido = Convert.ToInt32(registro.Fields["PEDIDO"]),
+                    QuantidadeEntregue = Convert.ToInt32(registro.Fields["QTDEENTREGUE"]),
+
+                });
+
+                
+                Query VerificarRegistros = new Query($@"SELECT * FROM K_GN_ANALISECOOPERADO A
+                                                        WHERE A.FORNECEDOR = :PRODUTOR AND A.ITEM = :PRODUTOMATRIZ AND A.PROCESSO = {request.Processo}");
+                VerificarRegistros.Parameters.Add("PRODUTOR", Convert.ToInt32(registro.Fields["PRODUTOR"]));
+                VerificarRegistros.Parameters.Add("PRODUTOMATRIZ", Convert.ToInt32(registro.Fields["PRODUTOMATRIZ"]));
+                var verificar = VerificarRegistros.Execute();
+                if (verificar.Count != 0)
+                {
+                    int Fornecedor = Convert.ToInt32(registro.Fields["PRODUTOR"]);
+                    int ProdutoMatriz = Convert.ToInt32(registro.Fields["PRODUTOMATRIZ"]);
+                    double SomaPedidoCooperado = 0;
+                    foreach (var Soma in PedidoCooperado)
+                    {
+                        if (Fornecedor == Convert.ToInt32(Soma.Fields["PRODUTOR"]) && ProdutoMatriz == Convert.ToInt32(Soma.Fields["PRODUTOMATRIZ"]))
+                        {
+                            SomaPedidoCooperado += Convert.ToInt32(Soma.Fields["PEDIDO"]);
+                        }
+                    }
+                    EntityBase AnaliseCooperado = Entity.Get(EntityDefinition.GetByName("K_GN_ANALISECOOPERADO"), new Criteria($"A.FORNECEDOR = :PRODUTOR AND A.ITEM = :PRODUTOMATRIZ AND A.PROCESSO = {request.Processo}", new Parameter("PRODUTOR", Convert.ToInt32(registro.Fields["PRODUTOR"])), new Parameter("PRODUTOMATRIZ", Convert.ToInt32(registro.Fields["PRODUTOMATRIZ"]))), GetMode.Edit);
+                    AnaliseCooperado.Fields["ORDEMDECOMPRA"] = SomaPedidoCooperado;
+                    AnaliseCooperado.Save();
+                }
+                
+            }
+
+            Query queryProgramacao = new Query($@"SELECT C.FORNECEDOR,
+                                                                C.COTA,
+                                                                C.QUANTIDADECOTA,
+                                                                C.QUANTIDADEPROGRAMADA,
+                                                                D.PRODUTO
+                                                                FROM K_CM_PROGRAMADOFORNECEDORES C
+                                                                JOIN K_CM_PROGRAMADOPRODUTOS D ON C.PROGRAMADOPRODUTO = D.HANDLE
+                                                                JOIN K_CM_PROGRAMADOS P ON D.PROGRAMADOS = P.HANDLE
+                                                                WHERE P.DATAINICIO = :INICIO
+                                                                  AND P.DATAFIM = :FIM");
+            queryProgramacao.Parameters.Add(new Parameter("INICIO", request.Datainicio));
+            queryProgramacao.Parameters.Add(new Parameter("FIM", request.Datafim));
+            var Programacao = queryProgramacao.Execute();
+            foreach (var registro in Programacao)
+            {
+                
+                int ProdutoMatriz = Convert.ToInt32(registro.Fields["PRODUTO"]);
+                int Fornecedor = Convert.ToInt32(registro.Fields["FORNECEDOR"]);
+                Query queryListarCooperados = new Query($@"SELECT * FROM K_GN_ANALISECOOPERADO WHERE PROCESSO ={request.Processo}");
+                var ListarCooperados = queryListarCooperados.Execute();
+                foreach (var registro1 in ListarCooperados)
+                {
+                    
+                    if (ProdutoMatriz == Convert.ToInt32(registro1.Fields["ITEM"]) && Fornecedor == Convert.ToInt32(registro1.Fields["FORNECEDOR"]))
+                    {
+                        EntityBase AnaliseCooperado = Entity.Get(EntityDefinition.GetByName("K_GN_ANALISECOOPERADO"), new Criteria($"A.FORNECEDOR = :PRODUTOR AND A.ITEM = :PRODUTOMATRIZ AND A.PROCESSO = {request.Processo}", new Parameter("PRODUTOR", Convert.ToInt32(registro1.Fields["FORNECEDOR"])), new Parameter("PRODUTOMATRIZ", Convert.ToInt32(registro1.Fields["ITEM"]))), GetMode.Edit);
+                        AnaliseCooperado.Fields["PROGRAMADO"] = Convert.ToInt32(registro.Fields["QUANTIDADEPROGRAMADA"]);
+                        AnaliseCooperado.Save();
+                        break;
+                    }
                         
+                    
                 }
             }
 
-            
+            Query queryAnaliseCooperado = new Query($@"SELECT * FROM K_GN_ANALISECOOPERADO
+                                                        WHERE PROCESSO ={request.Processo}");
+            var RegistrosAnaliseCooperado = queryAnaliseCooperado.Execute();
+            foreach(var registro in RegistrosAnaliseCooperado)
+            {
+                int Produtomatriz = Convert.ToInt32(registro.Fields["ITEM"]);
+                double pedidomercado = Convert.ToDouble(registro.Fields["PEDIDOMERCADO"]);
+                double atendimentoNFE = Convert.ToDouble(registro.Fields["ATENDIMENTONFE"]);
+                double programado = Convert.ToDouble(registro.Fields["PROGRAMADO"]);
+                double cotaatual = Convert.ToDouble(registro.Fields["COTAATUAL"]);
+                double nfexprog = 0;
+                double porcAtendidoMercado = 0;
+                double cotaprojetada = 0;
+                if(programado == 0)
+                {
+                    programado = 1;//TESTE ENQUANTO NAO TEM PROGRAMADO
+                }
+                
 
+                if (pedidomercado != 0)
+                {
+                    porcAtendidoMercado = (atendimentoNFE - pedidomercado) / pedidomercado * 100;
+                }
+
+                
+
+                if(programado ==0 && atendimentoNFE!=0)
+                {
+                    double Soma = 0;
+                    foreach(var registro1 in NFe)
+                    {
+                        if(Produtomatriz == Convert.ToInt32(registro1.Fields["ITEM MATRIZ"]))
+                        {
+                            Soma += Convert.ToInt32(registro1.Fields["QUANTIDADE"]);
+                        }
+                    }
+                    nfexprog = atendimentoNFE / Soma;
+                }
+                else
+                {
+                    if (programado == 1)
+                    {
+                        nfexprog = 0;//TESTE ENQUANTO NAO TEM PROGRAMADO
+                    }
+                    else
+                    {
+                        nfexprog = (atendimentoNFE - programado) / programado * 100;
+                    }
+                }
+                EntityBase AnaliseCooperado = Entity.Get(EntityDefinition.GetByName("K_GN_ANALISECOOPERADO"), new Criteria($"A.FORNECEDOR = :PRODUTOR AND A.ITEM = :PRODUTOMATRIZ AND A.PROCESSO = {request.Processo}", new Parameter("PRODUTOR", Convert.ToInt32(registro.Fields["FORNECEDOR"])), new Parameter("PRODUTOMATRIZ", Convert.ToInt32(registro.Fields["ITEM"]))), GetMode.Edit);
+                AnaliseCooperado.Fields["NFEXPROGRAMADO"] = nfexprog;
+                AnaliseCooperado.Fields["DIFERENCAATENDIDONFEMERCADO"] = atendimentoNFE - pedidomercado;
+                AnaliseCooperado.Fields["PORCENTAGEMATENDIDOMERCADO"] = porcAtendidoMercado;
+                AnaliseCooperado.Fields["DIFERENCAPROGRAMADOATENDIDONFE"] = atendimentoNFE - programado;
+                AnaliseCooperado.Fields["PORCENTAGEMPROGRAMADOATENDIDO"] = (atendimentoNFE - programado)/ programado * 100;
+                if (cotaatual == 0 && nfexprog > 0)
+                {
+                    cotaprojetada = nfexprog * 100;
+                }
+                else
+                {
+                    if (atendimentoNFE < programado && pedidomercado < programado)
+                    {
+                        cotaprojetada = cotaatual + (cotaatual * (porcAtendidoMercado/100));
+                    }
+                    else
+                    {
+                        cotaprojetada = cotaatual + (cotaatual * (nfexprog/100));
+                    }
+                }
+                AnaliseCooperado.Fields["COTAPROJETADA"] = cotaprojetada;
+                AnaliseCooperado.Save();
+            }
+
+            
             return "Processo Executado";
+        }
+
+        public string CarregarFornecedores(RequestCarregarFornecerdor request)
+        {
+
+            EntityBase ProgramadoProdutos = Entity.Get(EntityDefinition.GetByName("K_CM_PROGRAMADOPRODUTOS"), new Criteria($"A.HANDLE = :HANDLE", new Parameter("HANDLE", request.Handle)),GetMode.Edit);
+            if (((ListItem)ProgramadoProdutos.Fields["STATUS"]).Value >= 2)
+            {
+                ProgramadoProdutos.Save();
+                return "Processamento ja foi inciado anteriormente";
+            }
+            else
+            {
+                ProgramadoProdutos.Fields["STATUS"] = new ListItem(2, "");
+                ProgramadoProdutos.Save();
+                Query query = new Query(@"SELECT GN_PESSOAS.HANDLE 'PRODUTOR', -- troquei apelido pelo HANDLE
+                                                                   PRODUTOBASE.NOME 'PRODUTOBASE',
+                                                                   PRODUTOMATRIZ.HANDLE 'PRODUTOMATRIZ', -- troquei NOME pelo HANDLE
+                                                                   MAX(PERCENTUALPREFERENCIA) 'COTA'
+                                                              FROM K_PD_PRODUTOCOTAPREFERENCIAS
+                                                                   LEFT OUTER JOIN K_PD_PRODUTOCOTAS ON (K_PD_PRODUTOCOTAS.HANDLE = K_PD_PRODUTOCOTAPREFERENCIAS.PRODUTOCOTA)
+                                                                   LEFT OUTER JOIN K_PD_COTAPERIODO ON (K_PD_COTAPERIODO.HANDLE = K_PD_PRODUTOCOTAS.COTAPERIODO)
+                                                                   LEFT OUTER JOIN PD_PRODUTOS ON (PD_PRODUTOS.HANDLE = K_PD_PRODUTOCOTAPREFERENCIAS.PRODUTODERIVADO)
+                                                                   LEFT OUTER JOIN PD_PRODUTOS PRODUTOBASE ON (PRODUTOBASE.HANDLE = PD_PRODUTOS.K_PRODUTOBASE)
+                                                                   LEFT OUTER JOIN GN_PESSOAS ON (GN_PESSOAS.HANDLE = K_PD_PRODUTOCOTAS.PESSOA)
+                                                                   LEFT OUTER JOIN PD_PRODUTOS PRODUTOMATRIZ ON (PRODUTOMATRIZ.HANDLE = PD_PRODUTOS.K_PRODUTOMATRIZ)
+                                                             WHERE
+                                                                   (
+                                                                       (
+                                                                           :INICIO BETWEEN K_PD_COTAPERIODO.DATAINICIO AND K_PD_COTAPERIODO.DATAFIM
+                                                                       )
+                                                                       OR
+                                                                       (
+                                                                           :FIM BETWEEN K_PD_COTAPERIODO.DATAINICIO AND K_PD_COTAPERIODO.DATAFIM
+                                                                       )
+                                                                   )
+                                                                   AND PRODUTOMATRIZ.HANDLE = :PRODUTOMATRIZ
+                                                             GROUP BY GN_PESSOAS.HANDLE, -- troquei apelido pelo HANDLE
+                                                                   PRODUTOBASE.NOME,
+                                                                   PRODUTOMATRIZ.HANDLE -- troquei NOME pelo HANDLE ");
+                query.Parameters.Add(new Parameter("INICIO", request.DataInicio));
+                query.Parameters.Add(new Parameter("FIM", request.DataFim));
+                query.Parameters.Add(new Parameter("PRODUTOMATRIZ", request.Produto));
+                var registros = query.Execute();
+                foreach (var registro in registros)
+                {
+                    EntityBase ProgramadoFornecedores = Entity.Create(EntityDefinition.GetByName("K_CM_PROGRAMADOFORNECEDORES"));
+                    ProgramadoFornecedores.Fields["PROGRAMADOPRODUTO"] = new EntityAssociation(request.Handle, EntityDefinition.GetByName("K_CM_PROGRAMADOPRODUTOS"));
+                    ProgramadoFornecedores.Fields["FORNECEDOR"] = new EntityAssociation(Convert.ToInt32(registro.Fields["PRODUTOR"]), EntityDefinition.GetByName("GN_PESSOAS"));
+                    ProgramadoFornecedores.Fields["COTA"] = Convert.ToDouble(registro.Fields["COTA"]);
+                    //ProgramadoFornecedores.Fields["NOME"] = "teste";
+                    //ProgramadoFornecedores.Fields["DATAINICIO"] = DateTime.Now;
+                    //ProgramadoFornecedores.Fields["DATAFIM"] = DateTime.Now;
+                    ProgramadoFornecedores.Fields["QUANTIDADECOTA"] = (Convert.ToDouble(registro.Fields["COTA"]) / 100) * request.Quantidade;
+                    ProgramadoFornecedores.Fields["USUARIOINCLUIU"] = new EntityAssociation(Convert.ToInt32(BennerContext.Security.GetLoggedUserHandle()), EntityDefinition.GetByName("GN_PESSOAS"));
+                    ProgramadoFornecedores.Save();
+                }
+                return "Processo Concluído";
+            }
+        }
+        public string CarregarFonecedoresSelecionados(BusinessArgs args)
+        {
+
+            
+            string selecionados = string.Join(",", (args.SelectedEntitiesHandles.ToArray()).Select(h => h.ToString()));
+            if (selecionados == "")
+            {
+                throw new BusinessException("Selecione os Registros");
+            }
+            else
+            {
+                RequestCarregarFornecerdor request = new RequestCarregarFornecerdor();
+                Query query = new Query($"SELECT * FROM K_CM_PROGRAMADOPRODUTOS WHERE HANDLE IN ({selecionados})");
+                var registros = query.Execute();
+                foreach (var registro in registros)
+                {
+                    EntityBase ProgramadoProdutos = Entity.Get(EntityDefinition.GetByName("K_CM_PROGRAMADOPRODUTOS"), new Criteria($"A.HANDLE = :HANDLE", new Parameter("HANDLE", Convert.ToInt32(registro.Fields["HANDLE"]))));
+                    request.Handle = Convert.ToInt32(ProgramadoProdutos.Fields["HANDLE"]);
+                    request.Produto = Convert.ToInt32(((EntityAssociation)ProgramadoProdutos.Fields["PRODUTO"]).Handle);
+                    request.Quantidade = Convert.ToInt32(ProgramadoProdutos.Fields["QUANTIDADE"]);
+                    request.DataInicio = Convert.ToString((DateTime)((EntityAssociation)ProgramadoProdutos.Fields["PROGRAMADOS"]).Instance.Fields["DATAINICIO"]);
+                    request.DataFim = Convert.ToString((DateTime)((EntityAssociation)ProgramadoProdutos.Fields["PROGRAMADOS"]).Instance.Fields["DATAFIM"]);
+                    string Msg = CarregarFornecedores(request);
+                }
+            }
+            return "Processo Concluido";
         }
     }
 }

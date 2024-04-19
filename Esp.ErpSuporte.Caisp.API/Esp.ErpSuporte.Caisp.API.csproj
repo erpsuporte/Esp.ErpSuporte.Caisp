@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\..\Benner\Web\NEW_CORP_CAISP_DEV_20230328\WebApp\bin\</OutputPath>
+    <OutputPath>..\..\CORP_CAISP\WebApp\bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -32,22 +32,22 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Benner.Tecnologia.Common2">
-      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\Benner.Tecnologia.Common2.dll</HintPath>
+      <HintPath>C:\Benner\Fontes\SISTEMA_BENNER\WebApp\bin\Benner.Tecnologia.Common2.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Benner.Tecnologia.Wes.Components.WebApp, Version=2008.0.0.0, Culture=neutral, PublicKeyToken=f2db26731026fd37, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\Benner.Tecnologia.Wes.Components.WebApp.dll</HintPath>
+      <HintPath>C:\Benner\Fontes\SISTEMA_BENNER\WebApp\bin\Benner.Tecnologia.Wes.Components.WebApp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Ninject">
-      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\Ninject.dll</HintPath>
+      <HintPath>C:\Benner\Fontes\SISTEMA_BENNER\WebApp\bin\Ninject.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web.Http">
-      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\System.Web.Http.dll</HintPath>
+      <HintPath>C:\Benner\Fontes\SISTEMA_BENNER\WebApp\bin\System.Web.Http.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Xml.Linq" />
@@ -62,9 +62,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ESP.Erpsuporte.Caisp.Business\Esp.Erpsuporte.Caisp.Business.csproj">
+    <ProjectReference Include="..\Esp.ErpSuporte.Caisp.Business\Esp.ErpSuporte.Caisp.Business.csproj">
       <Project>{c7f65543-fc50-4743-9f77-ef15990723f0}</Project>
-      <Name>Esp.Erpsuporte.Caisp.Business</Name>
+      <Name>Esp.ErpSuporte.Caisp.Business</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

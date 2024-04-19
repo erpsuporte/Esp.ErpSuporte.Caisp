@@ -1,4 +1,5 @@
-﻿using Esp.ErpSuporte.Caisp.Business.Modelos.Caisp;
+﻿using Benner.Tecnologia.Business;
+using Esp.ErpSuporte.Caisp.Business.Modelos.Caisp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,9 @@ namespace Esp.ErpSuporte.Caisp.Business.Interfaces.Caisp
         List<SacModelGet> buscarSac(); 
         List<EntregasItensModel> buscarEntregasPeriodo(EntregasPeriodoBuscaModel request);
         string ProcessarAnalise(ProssarAnaliseModel request);
+        string CarregarFornecedores(RequestCarregarFornecerdor request);
+        string CarregarFonecedoresSelecionados(BusinessArgs args);
+
 
     }
 }
