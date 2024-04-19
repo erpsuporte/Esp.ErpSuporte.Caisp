@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\CORP_CAISP\WebApp\bin\</OutputPath>
+    <OutputPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -32,22 +32,22 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Benner.Tecnologia.Common2">
-      <HintPath>C:\Benner\Fontes\SISTEMA_BENNER\WebApp\bin\Benner.Tecnologia.Common2.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\Benner.Tecnologia.Common2.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Benner.Tecnologia.Wes.Components.WebApp, Version=2008.0.0.0, Culture=neutral, PublicKeyToken=f2db26731026fd37, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Benner\Fontes\SISTEMA_BENNER\WebApp\bin\Benner.Tecnologia.Wes.Components.WebApp.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\Benner.Tecnologia.Wes.Components.WebApp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Ninject">
-      <HintPath>C:\Benner\Fontes\SISTEMA_BENNER\WebApp\bin\Ninject.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\Ninject.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web.Http">
-      <HintPath>C:\Benner\Fontes\SISTEMA_BENNER\WebApp\bin\System.Web.Http.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\System.Web.Http.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Xml.Linq" />

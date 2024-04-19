@@ -40,7 +40,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
         }
         public void CarregarFonecedores(BusinessArgs args)
         {
-            if (Convert.ToInt32(this.Fields["STATUS"]) >= 2)
+            if (((ListItem)this.Fields["STATUS"]).Value >= 2)
             {
                 args.Message = "Processamento ja foi inciado anteriormente";
             }

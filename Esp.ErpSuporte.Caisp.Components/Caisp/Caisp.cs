@@ -967,8 +967,18 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
 
             //List<EntityBase> registros = Entity.GetMany(EntityDefinition.GetByName("K_GN_PROGRAMACAO"), new Criteria());
 
-            Query query = new Query(@"SELECT * FROM K_GN_PROGRAMACAO
-                                        WHERE PERIODO BETWEEN CONVERT(datetime, :INICIO , 103) AND CONVERT(datetime, :FIM, 103);");
+            Query query = new Query(@"SELECT C.HANDLE,
+                                                C.COTA,
+                                                C.QUANTIDADECOTA,
+                                                C.QUANTIDADEPROGRAMADA,
+                                                D.PRODUTO,
+                                                P.DATAINICIO,
+                                                E.NOME
+                                                FROM K_CM_PROGRAMADOFORNECEDORES C
+                                                JOIN K_CM_PROGRAMADOPRODUTOS D ON C.PROGRAMADOPRODUTO = D.HANDLE
+                                                JOIN PD_PRODUTOS E ON D.PRODUTO = E.HANDLE
+                                                JOIN K_CM_PROGRAMADOS P ON D.PROGRAMADOS = P.HANDLE
+                                                WHERE P.DATAINICIO <= :FIM AND P.DATAFIM >= :INICIO AND EXISTS (SELECT PESSOA FROM K_GN_PESSOAUSUARIOS U WHERE U.USUARIO = @USUARIO AND U.PESSOA =C.FORNECEDOR)");
             
             query.Parameters.Add(new Parameter("INICIO", request.Inicio));
             query.Parameters.Add(new Parameter("FIM", request.Fim));
@@ -979,9 +989,9 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                 retorno.Add(new ProgramacaoModel() // adicionar filtro de periodo inicio fim
                 {
                     Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
-                    Produto = Convert.ToString(registro.Fields["PRODUTO"]),
-                    Periodo = Convert.ToDateTime(registro.Fields["PERIODO"]),
-                    Programado = Convert.ToInt32(registro.Fields["PROGRAMADO"])
+                    Produto = Convert.ToString(registro.Fields["NOME"]),
+                    Periodo = Convert.ToDateTime(registro.Fields["DATAINICIO"]),
+                    Programado = Convert.ToInt32(registro.Fields["QUANTIDADEPROGRAMADA"])
                 });
             }
 
@@ -1606,8 +1616,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                                                                 FROM K_CM_PROGRAMADOFORNECEDORES C
                                                                 JOIN K_CM_PROGRAMADOPRODUTOS D ON C.PROGRAMADOPRODUTO = D.HANDLE
                                                                 JOIN K_CM_PROGRAMADOS P ON D.PROGRAMADOS = P.HANDLE
-                                                                WHERE P.DATAINICIO = :INICIO
-                                                                  AND P.DATAFIM = :FIM");
+                                                                WHERE P.DATAINICIO <= :FIM AND P.DATAFIM >= :INICIO");
             queryProgramacao.Parameters.Add(new Parameter("INICIO", request.Datainicio));
             queryProgramacao.Parameters.Add(new Parameter("FIM", request.Datafim));
             var Programacao = queryProgramacao.Execute();
