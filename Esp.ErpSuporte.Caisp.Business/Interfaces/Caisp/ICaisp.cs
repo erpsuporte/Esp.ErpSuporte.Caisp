@@ -23,7 +23,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Interfaces.Caisp
         ResponseModel enviarSac(SacModelPost request); 
         List<SacModelGet> buscarSac(); 
         List<EntregasItensModel> buscarEntregasPeriodo(EntregasPeriodoBuscaModel request);
-        string ProcessarAnalise(ProssarAnaliseModel request);
+        string ProcessarAnalise(ProcessarAnaliseModel request);
         string CarregarFornecedores(RequestCarregarFornecerdor request);
         string CarregarFonecedoresSelecionados(BusinessArgs args);
 

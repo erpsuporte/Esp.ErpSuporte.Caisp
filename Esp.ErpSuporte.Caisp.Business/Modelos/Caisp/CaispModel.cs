@@ -200,8 +200,10 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
     {
         public int Handle { get; set; }
         public string Produto { get; set; }
-        public DateTime Periodo { get; set; }
-        public int Programado { get; set; }
+        public DateTime DataInicio { get; set; }
+        public DateTime DataFim { get; set; }
+        public int ProgramadoDia { get; set; }
+        public int ProgramadoPeriodo { get; set; }
     }
 
     public class SacModelPost
@@ -242,7 +244,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
 
     }
 
-    public class ProssarAnaliseModel
+    public class ProcessarAnaliseModel
     {
         public string Datainicio { get; set; }
         public string Datafim { get; set; }

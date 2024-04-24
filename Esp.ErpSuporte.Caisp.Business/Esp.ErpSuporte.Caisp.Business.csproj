@@ -7,8 +7,8 @@
     <ProjectGuid>{C7F65543-FC50-4743-9F77-EF15990723F0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ESP.Erpsuporte.Caisp.Business</RootNamespace>
-    <AssemblyName>ESP.Erpsuporte.Caisp.Business</AssemblyName>
+    <RootNamespace>Esp.Erpsuporte.Caisp.Business</RootNamespace>
+    <AssemblyName>Esp.Erpsuporte.Caisp.Business</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -108,13 +108,12 @@
     <Compile Include="Entidades\Sac.userinterface.cs" />
     <Compile Include="Interfaces\Caisp\ICaisp.cs" />
     <Compile Include="Interfaces\Caisp\INotificacaoSac.cs" />
+    <Compile Include="Interfaces\Caisp\IProcessarAnalise.cs" />
     <Compile Include="Modelos\Caisp\CaispModel.cs" />
     <Compile Include="Modelos\Caisp\NotificacaoSacRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Esp\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy $(TargetPath) C:\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin /Y /R

@@ -40,13 +40,12 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
             {
                 this.Status = GnProcessaranaliseStatusListaItens.ItemProcessando;
                 this.Save();
-                ProssarAnaliseModel request = new ProssarAnaliseModel();
+                ProcessarAnaliseModel request = new ProcessarAnaliseModel();
                 request.Datafim = Convert.ToString(this.DataFinal);
                 request.Datainicio = Convert.ToString(this.DataInicio);
                 request.Processo = Convert.ToInt32(this.Handle);
                 args.Message = this.gerenciador.ProcessarAnalise(request);
-                this.Status = GnProcessaranaliseStatusListaItens.ItemProcessado;
-                this.Save();
+                
             }
             
         }

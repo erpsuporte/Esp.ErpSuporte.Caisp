@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="Caisp\Caisp.cs" />
     <Compile Include="Caisp\NotificadorSacTask.cs" />
+    <Compile Include="Caisp\ProcessarAnaliseTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
