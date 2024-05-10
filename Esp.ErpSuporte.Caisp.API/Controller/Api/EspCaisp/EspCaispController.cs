@@ -15,8 +15,8 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
     /// APIs especificas da Caisp
     /// </summary>
     [Authorize]
-    [RoutePrefix("api/EspCaisp")]
-    public class EspCaispController : ApiController//ApiController
+    [RoutePrefix("api/Controler")]
+    public class EspCaispController : ApiController
     {
         // ok deu certo
         ICaisp componente = DependencyContainer.Get<ICaisp>();
@@ -33,8 +33,9 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
         /// Busca os contatos do Administrativo da Caisp
         /// </summary>
         /// <returns></returns>
+        
+        [Route("buscarContatos")]
         [HttpGet]
-        [Route("buscarContatos")] 
         public IHttpActionResult buscarContatos()
         {
             

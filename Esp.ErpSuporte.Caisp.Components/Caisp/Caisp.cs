@@ -798,15 +798,19 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                 var resgitros2 = query2.Execute();
                 foreach(EntityBase registro2 in resgitros2)
                 {
-
+                    string DataBaixa = null;
+                    if (Convert.ToDateTime(registro2.Fields["DATALIQUIDACAO"]) != DateTime.MinValue)
+                    {
+                        DataBaixa = Convert.ToDateTime(registro2.Fields["DATALIQUIDACAO"]).ToString("yyyy-MM-ddTHH:mm:ss");
+                    }
                     parcelas.Add(new NotaFiscalParcelasModel()
                     {
                         Handle = Convert.ToInt32(registro2.Fields["HANDLE"]),
                         DataVencimento = Convert.ToDateTime(registro2.Fields["VCTOPRORROGADO"]),
-                        DataBaixa = Convert.ToString(registro2.Fields["DATALIQUIDACAO"]),//Convert.ToString(registro2.Fields["DATALIQUIDACAO"]),
+                        DataBaixa = DataBaixa,//Convert.ToString(registro2.Fields["DATALIQUIDACAO"]),
                         Valor = Convert.ToDouble(registro2.Fields["VALOR"]),
                         ValorBaixado = Convert.ToDouble(registro2.Fields["VALORESBAIXADOS"])
-                    }); ;
+                    }) ;
                     
 
                 }
@@ -983,7 +987,9 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                                                 JOIN PD_PRODUTOS E ON D.PRODUTO = E.HANDLE
                                                 JOIN K_CM_PROGRAMADOS P ON D.PROGRAMADOS = P.HANDLE
                                                 WHERE P.DATAINICIO <= :FIM AND P.DATAFIM >= :INICIO AND EXISTS (SELECT PESSOA FROM K_GN_PESSOAUSUARIOS U WHERE U.USUARIO = @USUARIO AND U.PESSOA =C.FORNECEDOR)");
-            
+
+
+
             query.Parameters.Add(new Parameter("INICIO", request.Inicio));
             query.Parameters.Add(new Parameter("FIM", request.Fim));
             
@@ -1031,9 +1037,9 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                 {
                     Handle = Convert.ToInt32(registro.Fields["HANDLE"]),
                     Produto = Convert.ToString(registro.Fields["NOME"]),
-                    DataInicio = Convert.ToDateTime(registro.Fields["DATAINICIO"]),
+                    Periodo = Convert.ToDateTime(registro.Fields["DATAINICIO"]),
                     DataFim = Convert.ToDateTime(registro.Fields["DATAFIM"]),
-                    ProgramadoDia = Convert.ToInt32(registro.Fields["QUANTIDADEPROGRAMADA"]) / dias,
+                    Programado = Convert.ToInt32(registro.Fields["QUANTIDADEPROGRAMADA"]) / dias, ///Programado Dia
                     ProgramadoPeriodo = ProgramadoTotal
                 });
             

@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34309.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esp.ErpSuporte.Caisp.API", "Esp.ErpSuporte.Caisp.API\Esp.ErpSuporte.Caisp.API.csproj", "{68ADB2CB-B156-4A66-BD08-7F3DD6DC8B78}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esp.ErpSuporte.Caisp.API", "Esp.ErpSuporte.Caisp.API\Esp.ErpSuporte.Caisp.API.csproj", "{2DCD9547-046F-4538-AB8D-842250FF0FB2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esp.ErpSuporte.Caisp.Business", "Esp.ErpSuporte.Caisp.Business\Esp.ErpSuporte.Caisp.Business.csproj", "{525A43DA-8F00-4872-AC2A-9AD8BA24229D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esp.ErpSuporte.Caisp.Business", "Esp.ErpSuporte.Caisp.Business\Esp.ErpSuporte.Caisp.Business.csproj", "{C7F65543-FC50-4743-9F77-EF15990723F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esp.ErpSuporte.Caisp.Components", "Esp.ErpSuporte.Caisp.Components\Esp.ErpSuporte.Caisp.Components.csproj", "{9354B776-7343-4E29-9E0A-5590585B90D3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esp.ErpSuporte.Caisp.Components", "Esp.ErpSuporte.Caisp.Components\Esp.ErpSuporte.Caisp.Components.csproj", "{6A1193E1-F8C8-4D17-941E-4FFABB2F6135}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esp.ErpSuporte.Caisp.ESPECIFICO.IOC", "Esp.ErpSuporte.Caisp.ESPECIFICO.IOC\Esp.ErpSuporte.Caisp.ESPECIFICO.IOC.csproj", "{2DBBE23E-AE7E-4126-869D-DB78E43BBA75}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esp.ErpSuporte.Caisp.ESPECIFICO.IOC", "Esp.ErpSuporte.Caisp.ESPECIFICO.IOC\Esp.ErpSuporte.Caisp.ESPECIFICO.IOC.csproj", "{A4AD658F-F656-4718-AB79-6A0FE0F8649A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esp.ErpSuporte.Wes.Caisp.ESPECIFICO.IOC", "Esp.ErpSuporte.Wes.Caisp.ESPECIFICO.IOC\Esp.ErpSuporte.Wes.Caisp.ESPECIFICO.IOC.csproj", "{F63581B6-BE34-4512-98AE-17E5E2DF0B46}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esp.ErpSuporte.Wes.Caisp.ESPECIFICO.IOC", "Esp.ErpSuporte.Wes.Caisp.ESPECIFICO.IOC\Esp.ErpSuporte.Wes.Caisp.ESPECIFICO.IOC.csproj", "{E3C4F7D7-D6A7-4EBD-94B2-363ED7178F1C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,26 +19,26 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{68ADB2CB-B156-4A66-BD08-7F3DD6DC8B78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{68ADB2CB-B156-4A66-BD08-7F3DD6DC8B78}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{68ADB2CB-B156-4A66-BD08-7F3DD6DC8B78}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{68ADB2CB-B156-4A66-BD08-7F3DD6DC8B78}.Release|Any CPU.Build.0 = Release|Any CPU
-		{525A43DA-8F00-4872-AC2A-9AD8BA24229D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{525A43DA-8F00-4872-AC2A-9AD8BA24229D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{525A43DA-8F00-4872-AC2A-9AD8BA24229D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{525A43DA-8F00-4872-AC2A-9AD8BA24229D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9354B776-7343-4E29-9E0A-5590585B90D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9354B776-7343-4E29-9E0A-5590585B90D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9354B776-7343-4E29-9E0A-5590585B90D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9354B776-7343-4E29-9E0A-5590585B90D3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2DBBE23E-AE7E-4126-869D-DB78E43BBA75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2DBBE23E-AE7E-4126-869D-DB78E43BBA75}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2DBBE23E-AE7E-4126-869D-DB78E43BBA75}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2DBBE23E-AE7E-4126-869D-DB78E43BBA75}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F63581B6-BE34-4512-98AE-17E5E2DF0B46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F63581B6-BE34-4512-98AE-17E5E2DF0B46}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F63581B6-BE34-4512-98AE-17E5E2DF0B46}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F63581B6-BE34-4512-98AE-17E5E2DF0B46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DCD9547-046F-4538-AB8D-842250FF0FB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DCD9547-046F-4538-AB8D-842250FF0FB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DCD9547-046F-4538-AB8D-842250FF0FB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DCD9547-046F-4538-AB8D-842250FF0FB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7F65543-FC50-4743-9F77-EF15990723F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7F65543-FC50-4743-9F77-EF15990723F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7F65543-FC50-4743-9F77-EF15990723F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7F65543-FC50-4743-9F77-EF15990723F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A1193E1-F8C8-4D17-941E-4FFABB2F6135}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A1193E1-F8C8-4D17-941E-4FFABB2F6135}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A1193E1-F8C8-4D17-941E-4FFABB2F6135}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A1193E1-F8C8-4D17-941E-4FFABB2F6135}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4AD658F-F656-4718-AB79-6A0FE0F8649A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4AD658F-F656-4718-AB79-6A0FE0F8649A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4AD658F-F656-4718-AB79-6A0FE0F8649A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4AD658F-F656-4718-AB79-6A0FE0F8649A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3C4F7D7-D6A7-4EBD-94B2-363ED7178F1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3C4F7D7-D6A7-4EBD-94B2-363ED7178F1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3C4F7D7-D6A7-4EBD-94B2-363ED7178F1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3C4F7D7-D6A7-4EBD-94B2-363ED7178F1C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -40,6 +40,15 @@
       <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\Benner.Tecnologia.Wes.Components.WebApp.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="BennerMobileCaisp.Api.ERP">
+      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\MSCaisp\BennerMobileCaisp.Api.ERP.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="MS.ERP.Api, Version=6.4.0.7, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\MS.ERP.Api.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Ninject">
       <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\Ninject.dll</HintPath>
       <Private>False</Private>
@@ -68,5 +77,6 @@
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

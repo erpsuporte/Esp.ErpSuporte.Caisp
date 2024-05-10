@@ -53,9 +53,9 @@
     <Compile Include="RegiterModule.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ESP.Erpsuporte.Caisp.Business\Esp.Erpsuporte.Caisp.Business.csproj">
+    <ProjectReference Include="..\Esp.ErpSuporte.Caisp.Business\Esp.ErpSuporte.Caisp.Business.csproj">
       <Project>{c7f65543-fc50-4743-9f77-ef15990723f0}</Project>
-      <Name>Esp.Erpsuporte.Caisp.Business</Name>
+      <Name>Esp.ErpSuporte.Caisp.Business</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Esp.ErpSuporte.Caisp.Components\Esp.ErpSuporte.Caisp.Components.csproj">
