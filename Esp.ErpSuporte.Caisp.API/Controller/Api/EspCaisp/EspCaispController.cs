@@ -15,7 +15,7 @@ namespace Esp.ErpSuporte.Caisp.API.Controller.Api.EspCaisp
     /// APIs especificas da Caisp
     /// </summary>
     [Authorize]
-    [RoutePrefix("api/Controler")]
+    [RoutePrefix("api/EspCaisp")]
     public class EspCaispController : ApiController
     {
         // ok deu certo

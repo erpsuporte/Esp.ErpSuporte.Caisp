@@ -31,6 +31,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Benner.Corporativo.Wes.WebApp, Version=5.14.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_MEGA_DEV_20220217\WebApp\bin\Benner.Corporativo.Wes.WebApp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Benner.Tecnologia.Common2">
       <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\Benner.Tecnologia.Common2.dll</HintPath>
       <Private>False</Private>
@@ -42,11 +47,6 @@
     </Reference>
     <Reference Include="BennerMobileCaisp.Api.ERP">
       <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\MSCaisp\BennerMobileCaisp.Api.ERP.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="MS.ERP.Api, Version=6.4.0.7, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin\MS.ERP.Api.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Ninject">

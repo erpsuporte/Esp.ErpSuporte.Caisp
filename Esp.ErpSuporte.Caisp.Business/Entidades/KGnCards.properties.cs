@@ -11,6 +11,7 @@
 using Benner.Tecnologia.Business;
 using Benner.Tecnologia.Common;
 using System;
+using Esp.ErpSuporte.Caisp.Business.Entidades;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -97,24 +98,8 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
         }
     }
     
-    /// <summary>
-    /// Interface para o DAO para a tabela K_GN_CARDS
-    /// </summary>
-    public partial interface IKGnCardsDao : IBusinessEntityDao<IKGnCards>
-    {
-    }
     
-    /// <summary>
-    /// DAO para a tabela K_GN_CARDS
-    /// </summary>
-    public partial class KGnCardsDao : BusinessEntityDao<KGnCards, IKGnCards>, IKGnCardsDao
-    {
-        
-        public static KGnCardsDao CreateInstance()
-        {
-            return CreateInstance<KGnCardsDao>();
-        }
-    }
+    
     
     /// <summary>
     /// Esta classe contém os itens do campo TELA.
