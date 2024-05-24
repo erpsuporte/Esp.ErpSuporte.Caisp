@@ -1195,10 +1195,11 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                                                                            :FIM BETWEEN K_PD_COTAPERIODO.DATAINICIO AND K_PD_COTAPERIODO.DATAFIM
                                                                        )
                                                                    )
-                                                                   AND PRODUTOMATRIZ.HANDLE = :PRODUTOMATRIZ
+                                                                   AND PRODUTOMATRIZ.HANDLE = :PRODUTOMATRIZ AND PERCENTUALPREFERENCIA <> 0 AND GN_PESSOAS.EHTERCEIRO ='N'
                                                              GROUP BY GN_PESSOAS.HANDLE, -- troquei apelido pelo HANDLE
                                                                    PRODUTOBASE.NOME,
-                                                                   PRODUTOMATRIZ.HANDLE -- troquei NOME pelo HANDLE ");
+                                                                   PRODUTOMATRIZ.HANDLE -- troquei NOME pelo HANDLE 
+                                                             ORDER BY MAX(PERCENTUALPREFERENCIA) DESC");
                 query.Parameters.Add(new Parameter("INICIO", request.DataInicio));
                 query.Parameters.Add(new Parameter("FIM", request.DataFim));
                 query.Parameters.Add(new Parameter("PRODUTOMATRIZ", request.Produto));
@@ -1224,11 +1225,13 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                     var verificar = VerificarRegistros.Execute();
                     if (verificar.Count == 0)
                     {
+                        Double quantidadeCota = (Convert.ToDouble(registro.Fields["COTA"]) / 100) * request.Quantidade;
                         EntityBase ProgramadoFornecedores = Entity.Create(EntityDefinition.GetByName("K_CM_PROGRAMADOFORNECEDORES"));
                         ProgramadoFornecedores.Fields["PROGRAMADOPRODUTO"] = new EntityAssociation(request.Handle, EntityDefinition.GetByName("K_CM_PROGRAMADOPRODUTOS"));
                         ProgramadoFornecedores.Fields["FORNECEDOR"] = new EntityAssociation(Convert.ToInt32(registro.Fields["PRODUTOR"]), EntityDefinition.GetByName("GN_PESSOAS"));
                         ProgramadoFornecedores.Fields["COTA"] = Convert.ToDouble(registro.Fields["COTA"]);
-                        ProgramadoFornecedores.Fields["QUANTIDADECOTA"] = (Convert.ToDouble(registro.Fields["COTA"]) / 100) * request.Quantidade;
+                        ProgramadoFornecedores.Fields["QUANTIDADECOTA"] = quantidadeCota;
+                        ProgramadoFornecedores.Fields["QUANTIDADEPROGRAMADA"] = quantidadeCota;
                         ProgramadoFornecedores.Fields["USUARIOINCLUIU"] = new EntityAssociation(Convert.ToInt32(BennerContext.Security.GetLoggedUserHandle()), EntityDefinition.GetByName("GN_PESSOAS"));
                         ProgramadoFornecedores.Save();
                     }
