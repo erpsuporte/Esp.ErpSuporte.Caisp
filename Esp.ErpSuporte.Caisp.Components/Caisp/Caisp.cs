@@ -1197,7 +1197,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                                                                    )
                                                                    AND PRODUTOMATRIZ.HANDLE = :PRODUTOMATRIZ AND PERCENTUALPREFERENCIA <> 0 AND GN_PESSOAS.EHTERCEIRO ='N'
                                                              GROUP BY GN_PESSOAS.HANDLE, -- troquei apelido pelo HANDLE
-                                                                   PRODUTOBASE.NOME,
+                                                                   PRODUTOBASE.NOME,'
                                                                    PRODUTOMATRIZ.HANDLE -- troquei NOME pelo HANDLE 
                                                              ORDER BY MAX(PERCENTUALPREFERENCIA) DESC");
                 query.Parameters.Add(new Parameter("INICIO", request.DataInicio));
