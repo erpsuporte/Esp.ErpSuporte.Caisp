@@ -367,4 +367,26 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
         public int Handle { get; set; }
 
     }
+    public class AnaliseFaturamentoModel
+    {
+        public DateTime DataEmissao { get; set; }
+        public int GrupoEmpresarial { get; set; }
+        public int CodigoReferencia { get; set; }
+        public string DescricaoItem { get; set; }
+        public int GrupoProdutos { get; set; }
+        public int UnidadeNegocio { get; set;}
+        public int QuantidadeFaturamento { get; set; }
+        public double FaturamentoBruto { get; set; } // Soma do valor Total  do produto por grupo
+        public double DF { get; set; } //Percentual Desconto do item
+        public double ICMS { get; set; }// ICMS do Item
+        public double ReducaoICMS { get; set; } //Redução ICMS do Item
+        public double PorcentagemICMS { get; set; } //Calculo ICMS do Item
+        public double PIS { get; set; } //PIS do Item
+        public double COFINS { get; set; } //COFINS do Item
+        public double FaturamentoLiquido { get; set; } //Faturamento Bruto - (Faturamento Bruto* (DF*100))*(1-ICMS/100)*(1-(PIS+COFINS)/100)
+        public double Bonificacao { get; set; } // Soma do valor Total  do produto por grupo
+        public double Devolucao { get; set; } // Soma do valor Total  do produto por grupo
+
+
+    }
 }

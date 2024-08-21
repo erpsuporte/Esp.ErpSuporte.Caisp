@@ -570,10 +570,6 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                 double nfexprog = 0;
                 double porcAtendidoMercado = 0;
                 double cotaprojetada = 0;
-                if (programado == 0)
-                {
-                    programado = 1;//TESTE ENQUANTO NAO TEM PROGRAMADO
-                }
 
 
                 if (pedidomercado != 0)
@@ -593,7 +589,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                             Soma += Convert.ToInt32(registro1.Fields["QUANTIDADE"]);
                         }
                     }
-                    nfexprog = atendimentoNFE / Soma;
+                    nfexprog = atendimentoNFE / Soma; //verificar se Soma é diferente de 0 quando programa
                 }
                 else
                 {

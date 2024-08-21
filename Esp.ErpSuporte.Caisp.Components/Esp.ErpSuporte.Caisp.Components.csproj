@@ -414,7 +414,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy $(TargetPath) C:\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin /Y /R</PostBuildEvent>
+    <PostBuildEvent>xcopy $(TargetPath) C:\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin /Y /R
+xcopy $(TargetPath) C:\Benner\Sistemas\CORP_CAISP_DEV_20230328 /Y /R</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\MongoDB.Driver.Core.signed.2.11.2\build\MongoDB.Driver.Core.signed.targets" Condition="Exists('..\packages\MongoDB.Driver.Core.signed.2.11.2\build\MongoDB.Driver.Core.signed.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

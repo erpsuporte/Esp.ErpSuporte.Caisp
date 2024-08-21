@@ -68,4 +68,7 @@
     <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy $(TargetPath) C:\Benner\Sistemas\CORP_CAISP_DEV_20230328 /Y /R</PostBuildEvent>
+  </PropertyGroup>
 </Project>

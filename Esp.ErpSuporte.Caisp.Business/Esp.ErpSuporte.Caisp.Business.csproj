@@ -119,6 +119,6 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy $(TargetPath) C:\Benner\Web\CORP_CAISP_DEV_20230328\WebApp\bin /Y /R
-</PostBuildEvent>
+xcopy $(TargetPath) C:\Benner\Sistemas\CORP_CAISP_DEV_20230328 /Y /R</PostBuildEvent>
   </PropertyGroup>
 </Project>
