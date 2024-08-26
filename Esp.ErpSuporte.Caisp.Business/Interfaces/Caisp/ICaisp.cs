@@ -26,7 +26,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Interfaces.Caisp
         string ProcessarAnalise(ProcessarAnaliseModel request);
         string CarregarFornecedores(RequestCarregarFornecerdor request);
         string CarregarFonecedoresSelecionados(BusinessArgs args);
-        void AnaliseFaturamento();
+        string AnaliseFaturamento(ProcessarAnaliseModel request);
 
 
     }

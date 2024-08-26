@@ -71,6 +71,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entidades\CmProcessaranalisefaturamento.cs" />
+    <Compile Include="Entidades\CmProcessaranalisefaturamento.properties.cs">
+      <DependentUpon>CmProcessaranalisefaturamento.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entidades\CmProcessaranalisefaturamento.userinterface.cs">
+      <DependentUpon>CmProcessaranalisefaturamento.cs</DependentUpon>
+    </Compile>
     <Compile Include="Entidades\CmProgramadofornecedores.cs" />
     <Compile Include="Entidades\CmProgramadofornecedores.properties.cs">
       <DependentUpon>CmProgramadofornecedores.cs</DependentUpon>

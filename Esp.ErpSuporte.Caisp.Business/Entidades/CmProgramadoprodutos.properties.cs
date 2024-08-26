@@ -20,7 +20,7 @@ using System.Runtime.Serialization;
 using System.Text;
 
 
-namespace Esp.ErpSuporte.Caisp.Business.Entidades
+namespace Esp.Erpsuporte.Caisp.Business.Entidades
 {
     
     
@@ -67,7 +67,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
         }
         
         [System.CodeDom.Compiler.GeneratedCodeAttribute("BEF Code Generator", "20.0.90.3")]
-        Benner.Tecnologia.Common.IEntityBase ProgramadosInstance
+        Esp.ErpSuporte.Caisp.Business.Entidades.ICmProgramados ProgramadosInstance
         {
             get;
             set;
@@ -86,6 +86,17 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
         /// </summary>
         [System.CodeDom.Compiler.GeneratedCodeAttribute("BEF Code Generator", "20.0.90.3")]
         System.Nullable<long> Quantidade
+        {
+            get;
+            set;
+        }
+        
+        /// <summary>
+        /// Status (STATUS.)
+        /// Opcional = N, Invisível = False
+        /// </summary>
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("BEF Code Generator", "20.0.90.3")]
+        CmProgramadoprodutosStatusListaItens Status
         {
             get;
             set;
@@ -140,6 +151,44 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
     }
     
     /// <summary>
+    /// Esta classe contém os itens do campo STATUS.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("BEF Code Generator", "20.0.90.3")]
+    public class CmProgramadoprodutosStatusListaItens : ListItems<CmProgramadoprodutosStatusListaItens>
+    {
+        
+        /// <summary>
+        /// Valor = 1, Item = Aguardando Carregamento.
+        /// </summary>
+        public static CmProgramadoprodutosStatusListaItens ItemAguardandoCarregamento;
+        
+        /// <summary>
+        /// Valor = 2, Item = Item Carregado.
+        /// </summary>
+        public static CmProgramadoprodutosStatusListaItens ItemItemCarregado;
+        
+		public static implicit operator CmProgramadoprodutosStatusListaItens(int index)
+		{
+			return GetByIndex(index);
+		}
+
+		public static implicit operator int(CmProgramadoprodutosStatusListaItens item)
+		{
+			return item.Index;
+		}
+        
+        static CmProgramadoprodutosStatusListaItens()
+        {
+			ItemAguardandoCarregamento = new CmProgramadoprodutosStatusListaItens {Index = 1, Description ="Aguardando Carregamento"};
+			ItemItemCarregado = new CmProgramadoprodutosStatusListaItens {Index = 2, Description ="Item Carregado"};
+
+			Items.Add(ItemAguardandoCarregamento);
+			Items.Add(ItemItemCarregado);
+
+        }
+    }
+    
+    /// <summary>
     /// CmProgramadoprodutos
     /// </summary>
     [EntityDefinitionName("K_CM_PROGRAMADOPRODUTOS")]
@@ -157,6 +206,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
 			public const string Produto = "PRODUTO";
 			public const string Programados = "PROGRAMADOS";
 			public const string Quantidade = "QUANTIDADE";
+			public const string Status = "STATUS";
 			public const string UsuarioAlterou = "USUARIOALTEROU";
 			public const string Usuarioincluiu = "USUARIOINCLUIU";
 		}
@@ -263,7 +313,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
         }
         
         [System.CodeDom.Compiler.GeneratedCodeAttribute("BEF Code Generator", "20.0.90.3")]
-        public Benner.Tecnologia.Common.IEntityBase ProgramadosInstance
+        public Esp.ErpSuporte.Caisp.Business.Entidades.ICmProgramados ProgramadosInstance
         {
             get
             {
@@ -280,7 +330,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
 					Programados = null;
 					return;
                 }
-                Programados.Instance = (EntityBase) value;
+                Programados.Instance = (Esp.ErpSuporte.Caisp.Business.Entidades.CmProgramados) value;
             }
         }
         
@@ -298,15 +348,15 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
         }
         
         /// <summary>
-        /// Programados (PROGRAMADOS.)
+        /// Programação (PROGRAMADOS.)
         /// Opcional = N, Invisível = False, Pesquisar = K_CM_PROGRAMADOS
         /// </summary>
         [System.CodeDom.Compiler.GeneratedCodeAttribute("BEF Code Generator", "20.0.90.3")]
-        public Benner.Tecnologia.Common.EntityAssociation Programados
+        public Benner.Tecnologia.Common.EntityAssociation<Esp.ErpSuporte.Caisp.Business.Entidades.CmProgramados> Programados
         {
             get
             {
-                return Fields["PROGRAMADOS"] as Benner.Tecnologia.Common.EntityAssociation;
+                return (Fields["PROGRAMADOS"] as EntityAssociation).Wrap<Esp.ErpSuporte.Caisp.Business.Entidades.CmProgramados>(Esp.ErpSuporte.Caisp.Business.Entidades.CmProgramados.Get);
             }
             set
             {
@@ -316,7 +366,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
                 }
                 else
                 {
-                    if (value.IsLoaded)
+                    if (value.Association.IsLoaded)
                     {
                         this.Programados.Instance = value.Instance;
                     }
@@ -342,6 +392,29 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
             set
             {
                 Fields["QUANTIDADE"] = value;
+            }
+        }
+        
+        /// <summary>
+        /// Status (STATUS.)
+        /// Opcional = N, Invisível = False
+        /// </summary>
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("BEF Code Generator", "20.0.90.3")]
+        public CmProgramadoprodutosStatusListaItens Status
+        {
+            get
+            {
+                ListItem listItem = Fields["STATUS"] as ListItem;
+				if (listItem != null)
+					return new CmProgramadoprodutosStatusListaItens { Index = listItem.Value, Description = listItem.Text };
+				return null;
+            }
+            set
+            {
+                if (value != null)
+					Fields["STATUS"] = new ListItem(value.Index, value.Description);
+				else
+					Fields["STATUS"] = null;
             }
         }
         

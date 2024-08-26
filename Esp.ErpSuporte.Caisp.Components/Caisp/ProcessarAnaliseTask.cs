@@ -593,21 +593,24 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                 }
                 else
                 {
-                    if (programado == 1)
-                    {
-                        nfexprog = 0;//TESTE ENQUANTO NAO TEM PROGRAMADO
-                    }
-                    else
-                    {
-                        nfexprog = (atendimentoNFE - programado) / programado * 100;
-                    }
+                    
+                        //nfexprog = (atendimentoNFE - programado) / programado * 100;
+                        nfexprog = 0;
+                    
                 }
                 EntityBase AnaliseCooperado = Entity.Get(EntityDefinition.GetByName("K_GN_ANALISECOOPERADO"), new Criteria($"A.FORNECEDOR = :PRODUTOR AND A.ITEM = :PRODUTOMATRIZ AND A.PROCESSO = {request.Processo}", new Parameter("PRODUTOR", Convert.ToInt32(registro.Fields["FORNECEDOR"])), new Parameter("PRODUTOMATRIZ", Convert.ToInt32(registro.Fields["ITEM"]))), GetMode.Edit);
                 AnaliseCooperado.Fields["NFEXPROGRAMADO"] = nfexprog;
                 AnaliseCooperado.Fields["DIFERENCAATENDIDONFEMERCADO"] = atendimentoNFE - pedidomercado;
                 AnaliseCooperado.Fields["PORCENTAGEMATENDIDOMERCADO"] = porcAtendidoMercado;
                 AnaliseCooperado.Fields["DIFERENCAPROGRAMADOATENDIDONFE"] = atendimentoNFE - programado;
-                AnaliseCooperado.Fields["PORCENTAGEMPROGRAMADOATENDIDO"] = (atendimentoNFE - programado) / programado * 100;
+                if (programado == 0)
+                {
+                    AnaliseCooperado.Fields["PORCENTAGEMPROGRAMADOATENDIDO"] = 0;
+                }
+                else
+                {
+                    AnaliseCooperado.Fields["PORCENTAGEMPROGRAMADOATENDIDO"] = (atendimentoNFE - programado) / programado * 100;
+                }
                 if (cotaatual == 0 && nfexprog > 0)
                 {
                     cotaprojetada = nfexprog * 100;
@@ -630,6 +633,7 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
             EntityBase ProcessarAnalise = Entity.Get(EntityDefinition.GetByName("K_GN_PROCESSARANALISE"), new Criteria($"A.HANDLE = :HANDLE", new Parameter("HANDLE", request.Processo)), GetMode.Edit);
             ProcessarAnalise.Fields["STATUS"] = new ListItem(3, "");
             ProcessarAnalise.Save();
+
         }
     }
     

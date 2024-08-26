@@ -6,7 +6,7 @@ namespace Esp.Erpsuporte.Caisp.Business.Entidades
     
     
     [ScriptUI()]
-    public partial class CmProgramadoprodutos
+    public partial class CmProcessaranalisefaturamento
     {
     }
 }

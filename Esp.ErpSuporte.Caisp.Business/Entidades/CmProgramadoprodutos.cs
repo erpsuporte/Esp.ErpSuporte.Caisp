@@ -12,10 +12,10 @@ using System.Runtime.Serialization;
 using System.Text;
 
 
-namespace Esp.ErpSuporte.Caisp.Business.Entidades
+namespace Esp.Erpsuporte.Caisp.Business.Entidades
 {
-
-
+    
+    
     /// <summary>
     /// Nome da Tabela: K_CM_PROGRAMADOPRODUTOS.
     /// Essa é uma classe parcial, os atributos, herança e propriedades estão definidos no arquivo CmProgramadoprodutos.properties.cs
@@ -29,6 +29,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
         }
         protected override void Created()
         {
+
             this.Fields["USUARIOINCLUIU"] = new EntityAssociation(Convert.ToInt32(BennerContext.Security.GetLoggedUserHandle()), EntityDefinition.GetByName("Z_GRUPOUSUARIOS"));
             this.Fields["STATUS"] = new ListItem(1, "");
             base.Created();
@@ -55,7 +56,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Entidades
         }
         public static void CarregarFonecedoresSelecionados(BusinessArgs args)
         {
-            
+
             var dataEntity = args.DataEntity;
             ICaisp gerenciador = Benner.Tecnologia.Common.IoC.DependencyContainer.Get<ICaisp>();
             args.Message = gerenciador.CarregarFonecedoresSelecionados(args);
