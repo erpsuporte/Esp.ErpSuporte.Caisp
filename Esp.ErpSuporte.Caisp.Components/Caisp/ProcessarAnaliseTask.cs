@@ -621,7 +621,11 @@ namespace Esp.ErpSuporte.Caisp.Components.Caisp
                     {
                         cotaprojetada = cotaatual + (cotaatual * (porcAtendidoMercado / 100));
                     }
-                    else
+                    else if(nfexprog == 0)
+                    {
+                        cotaprojetada = cotaatual;
+                    }
+                    else 
                     {
                         cotaprojetada = cotaatual + (cotaatual * (nfexprog / 100));
                     }

@@ -373,6 +373,7 @@ namespace Esp.ErpSuporte.Caisp.Business.Modelos.Caisp
         public int GrupoEmpresarial { get; set; }
         public int CodigoReferencia { get; set; }
         public string DescricaoItem { get; set; }
+        public string NumeroPedido { get; set; }
         public int GrupoProdutos { get; set; }
         public int UnidadeNegocio { get; set;}
         public int QuantidadeFaturamento { get; set; }

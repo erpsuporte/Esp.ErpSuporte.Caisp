@@ -13,6 +13,7 @@ namespace Esp.ErpSuporte.Caisp.ESPECIFICO.IOC
             BusinessComponent.Register<ICaisp, CaispComponente>(Kernel);
             BusinessComponent.Register<INotificacaoSac, NotificadorSacTask>(Kernel);
             BusinessComponent.Register<IProcessarAnalise, ProcessarAnaliseTask>(Kernel);
+            BusinessComponent.Register<IProcessarAnaliseFat, ProcessarAnaliseFatTask>(Kernel);
         }
     }
 }

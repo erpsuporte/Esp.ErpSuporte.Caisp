@@ -12,6 +12,7 @@ namespace Esp.ErpSuporte.Wes.Caisp.ESPECIFICO.IOC
             BusinessComponent.RegisterProxy<ICaisp>(Kernel);
             BusinessComponent.RegisterProxy<INotificacaoSac>(Kernel);
             BusinessComponent.RegisterProxy<IProcessarAnalise>(Kernel);
+            BusinessComponent.RegisterProxy<IProcessarAnaliseFat>(Kernel);
         }
     }
 }
